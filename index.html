@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#05050f">
+<title>Fictional Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lilita+One&display=swap">
+<style>
+/* Layout: the app itself, full height, like the real product running in a
+   browser. On wide screens it sits as a column over a blurred backdrop of
+   the current character; the creator panel docks on the right. */
+:root{
+  color-scheme:dark;
+  --page:#05050f;
+  --ink:#05050f;
+  --glass:rgba(12,12,32,.72);
+  --violet:#7b2ff2;
+  --violet-hi:#9d5cff;
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.62);
+  --line:rgba(255,255,255,.10);
+  --panel:#11111b;
+  --panel-2:#1a1a28;
+  --top:max(14px, env(safe-area-inset-top, 0px));
+  --bot:env(safe-area-inset-bottom, 0px);
+  --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",Arial,sans-serif;
+  --brand:"Lilita One","Arial Rounded MT Bold",-apple-system,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--ui);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+.shell{display:flex;height:100%;width:100%}
+.stagewrap{flex:1 1 auto;min-width:0;position:relative;display:flex;justify-content:center;overflow:hidden;background:var(--page)}
+.backdrop{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(50px) saturate(1.1) brightness(.45);transform:scale(1.1)}
+.app{position:relative;width:100%;max-width:460px;height:100%;overflow:hidden;background:var(--ink);box-shadow:0 0 80px rgba(0,0,0,.6)}
+@media (max-width:520px){.backdrop{display:none}.app{max-width:none;box-shadow:none}}
+.screen{position:absolute;inset:0;overflow:hidden}
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* optional fake status bar, for screen recordings on desktop */
+.sb{position:absolute;top:0;left:0;right:0;height:50px;z-index:40;display:none;align-items:center;justify-content:space-between;padding:4px 30px 0 34px;font-weight:600;font-size:17px;letter-spacing:-.02em;color:#fff}
+.with-sb .sb{display:flex}
+.with-sb{--top:50px}
+.sb .icons{display:flex;align-items:center;gap:6px}
+.sb .batt{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:13px;padding:0 3px;border-radius:4px;background:#fff;color:#000;font-size:11px;font-weight:700}
+
+/* ---------- brand ---------- */
+.logo{--s:48.3px;display:inline-flex;align-items:center;gap:calc(var(--s)*.35);white-space:nowrap}
+.logo .sq{width:calc(var(--s)*1.13);height:calc(var(--s)*1.13);border-radius:calc(var(--s)*.35);background:linear-gradient(145deg,#4a22a8,#2a1068);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.logo .sq i{width:calc(var(--s)*.61);height:calc(var(--s)*.61);border-radius:50%;background:radial-gradient(circle at 35% 35%,#a979ff,#7b2ff2 60%);box-shadow:0 0 8px rgba(157,92,255,.8)}
+.logo span{font-family:var(--brand);font-size:var(--s);letter-spacing:.02em;line-height:1;display:inline-flex;align-items:center;color:#fff}
+.logo span em{display:inline-block;width:.7em;height:.7em;border-radius:50%;background:#fff;margin:0 .03em}
+.logo span b{font-weight:400;margin-left:.03em}
+.logo.sm{--s:35.7px}
+/* where the logo shares a row with buttons, it grows only as far as the row allows */
+.head .logo{--s:min(48.3px, calc((min(100vw,460px) - 145px) / 7.6))}
+.listhead .logo{--s:min(48.3px, calc((min(100vw,460px) - 110px) / 7.6))}
+.widget .wlogo .logo{--s:min(35.7px, calc((min(100vw,460px) - 160px) / 7.6))}
+
+.ic{display:block}
+.circ{width:44px;height:44px;border-radius:50%;background:var(--glass);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08);cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);flex:none}
+.head{position:absolute;top:var(--top);left:16px;right:16px;height:48px;display:flex;align-items:center;justify-content:space-between;z-index:6}
+.head .circ{width:46px;height:46px}
+
+/* ---------- nav ---------- */
+.nav{position:absolute;left:0;right:0;bottom:0;height:calc(70px + var(--bot));background:var(--ink);display:flex;justify-content:space-around;padding:14px 18px var(--bot);z-index:30}
+.nav button{background:none;border:0;position:relative;width:52px;height:40px;display:flex;align-items:flex-start;justify-content:center;cursor:pointer;color:#fff}
+.nav button.on{color:var(--violet-hi)}
+.nav .dot{position:absolute;top:-2px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--violet)}
+.nav .badge{position:absolute;top:-9px;right:2px;min-width:22px;height:22px;border-radius:11px;background:var(--violet);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--ink)}
+.navh{--navh:calc(70px + var(--bot))}
+
+/* ---------- feed ---------- */
+.feed .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,transparent 24%,transparent 48%,rgba(5,5,15,.6) 74%,rgba(5,5,15,.94) 100%)}
+.tabs{position:absolute;top:calc(var(--top) + 58px);left:12px;right:12px;display:flex;gap:6px;z-index:5;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{height:38px;padding:0 15px;border-radius:19px;background:var(--glass);border:1px solid rgba(255,255,255,.08);font-size:15px;cursor:pointer;white-space:nowrap;flex:none;backdrop-filter:blur(14px)}
+.tab.on{border:2px solid var(--violet)}
+.side{position:absolute;right:10px;bottom:calc(var(--navh) + 128px);display:flex;flex-direction:column;gap:9px;z-index:5}
+.side .circ{width:50px;height:50px}
+.side .tall{height:62px;border-radius:25px;flex-direction:column;gap:3px;font-size:13px}
+.side .tall svg{color:var(--violet-hi)}
+.stack{position:absolute;left:16px;right:70px;bottom:calc(var(--navh) + 70px);display:flex;flex-direction:column;gap:12px;z-index:5}
+.who{display:flex;align-items:center;gap:10px}
+.who .av{width:50px;height:50px;border-radius:50%;flex:none;position:relative}
+.who b{font-size:18px;font-weight:600;display:flex;align-items:center;gap:4px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.who small{display:block;font-size:13.5px;color:var(--muted);margin-top:1px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.post{background:rgba(14,14,40,.8);border-radius:18px 18px 18px 4px;padding:11px 13px 12px;font-size:15.5px;line-height:1.38;backdrop-filter:blur(10px)}
+.sayrow{position:absolute;left:16px;right:10px;bottom:calc(var(--navh) + 14px);display:flex;gap:10px;z-index:5;align-items:center}
+.say{flex:1;min-width:0;height:46px;border-radius:23px;background:rgba(14,14,40,.72);border:1px solid var(--line);display:flex;align-items:center;padding:0 12px 0 16px;backdrop-filter:blur(10px)}
+.say input,.composer input{flex:1;background:none;border:0;outline:0;color:#fff;font-size:16px;min-width:0}
+.say input::placeholder,.composer input::placeholder{color:rgba(255,255,255,.5)}
+.say button{background:none;border:0;cursor:pointer;padding:4px}
+.sayrow .circ{width:50px;height:50px}
+.prog{position:absolute;left:0;right:0;bottom:var(--navh);height:3px;background:rgba(255,255,255,.22);z-index:6}
+.prog i{position:absolute;inset:0;background:#fff;transform-origin:left;animation:prog 9s linear infinite}
+@keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ---------- chats list ---------- */
+.list{position:absolute;top:0;left:0;right:0;bottom:var(--navh);overflow-y:auto;scrollbar-width:none;background:var(--ink);padding-top:var(--top)}
+.list::-webkit-scrollbar{display:none}
+.listhead{display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 20px;height:72px}
+.list h1{font-size:24px;font-weight:600;margin:14px 0 8px 20px;letter-spacing:-.01em}
+.row{display:flex;gap:14px;align-items:center;padding:18px 16px;border-bottom:1px solid var(--line);cursor:pointer;position:relative}
+.row:hover{background:rgba(255,255,255,.02)}
+.row .pic{position:relative;flex:none;width:84px;height:110px;border-radius:12px}
+.row .pic .n{position:absolute;right:-6px;bottom:-6px;width:22px;height:22px;border-radius:50%;background:var(--violet);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--ink)}
+.row .tx{flex:1;min-width:0}
+.row .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.row .name{font-size:19px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .time{font-size:13px;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.act{display:flex;align-items:center;gap:5px;color:var(--violet-hi);font-size:14px;margin:4px 0 3px}
+.act svg{flex:none}
+.row .last{font-size:13.5px;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- chat ---------- */
+.chat .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,15,.5),transparent 20%,transparent 45%,rgba(5,5,15,.4) 100%)}
+.msgs{position:absolute;top:calc(var(--top) + 56px);left:0;right:0;bottom:calc(82px + var(--bot));overflow-y:auto;scrollbar-width:none;padding:24px 18px 10px;display:flex;flex-direction:column;gap:14px;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 70px);mask-image:linear-gradient(180deg,transparent 0,#000 70px);z-index:4}
+.msgs::-webkit-scrollbar{display:none}
+.msgs .sp{flex:1}
+.b{max-width:80%;padding:10px 13px 11px;font-size:16.5px;line-height:1.3;border-radius:22px;word-wrap:break-word}
+.b.them{align-self:flex-start;background:rgba(18,18,38,.9);border-bottom-left-radius:4px;backdrop-filter:blur(8px)}
+.b.me{align-self:flex-end;background:#e7e7ea;color:#111;border-bottom-right-radius:4px}
+.sys{align-self:center;max-width:88%;display:flex;gap:9px;align-items:center;background:rgba(72,72,84,.9);border-radius:22px;padding:9px 14px 10px;font-size:14px;line-height:1.3;color:rgba(255,255,255,.88);backdrop-filter:blur(8px)}
+.sys svg{color:var(--violet-hi);flex:none}
+.sys b{color:#fff}
+.date{align-self:center;background:#e7e7ea;color:#111;font-size:13px;letter-spacing:.04em;padding:4px 13px;border-radius:12px}
+.typing{align-self:flex-start;background:rgba(18,18,38,.9);border-radius:22px 22px 22px 4px;padding:14px 16px;display:flex;gap:5px}
+.typing i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.7);animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.composer{position:absolute;left:14px;right:14px;bottom:calc(16px + var(--bot));height:54px;border-radius:27px;background:rgba(12,12,30,.86);border:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 5px;z-index:5;backdrop-filter:blur(14px)}
+.composer .circ{width:44px;height:44px;background:transparent;border:1px solid rgba(255,255,255,.14)}
+.aurora{position:absolute;inset:0;background:#0a0820;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.75;animation:drift 14s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:360px;height:360px;left:-80px;top:80px;background:#6b2cf0}
+.aurora i:nth-child(2){width:300px;height:300px;right:-90px;top:320px;background:#d43c9a;animation-duration:17s;animation-delay:-4s}
+.aurora i:nth-child(3){width:340px;height:340px;left:20px;bottom:-60px;background:#2b6cf0;animation-duration:20s;animation-delay:-9s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-40px) scale(1.15)}100%{transform:translate(-30px,50px) scale(.95)}}
+
+/* ---------- iOS home ---------- */
+.home{display:flex;flex-direction:column;align-items:stretch;padding:calc(var(--top) + 16px) 22px calc(12px + var(--bot))}
+.home .wall{position:absolute;inset:0;background:
+  radial-gradient(420px 360px at 15% 12%,#3d5bd9 0%,transparent 60%),
+  radial-gradient(380px 380px at 90% 40%,#e0603a 0%,transparent 60%),
+  radial-gradient(420px 420px at 30% 85%,#16806b 0%,transparent 62%),
+  linear-gradient(160deg,#1c1f3a,#2a1630)}
+.grid{position:relative;display:grid;grid-template-columns:repeat(4,1fr);row-gap:18px;z-index:3}
+.fold{display:flex;flex-direction:column;align-items:center;gap:6px}
+.fold .box{width:62px;height:62px;border-radius:16px;background:rgba(150,150,160,.42);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(3,13px);grid-auto-rows:13px;gap:4px;padding:8px;align-content:start}
+.fold .box i{border-radius:4px;display:block}
+.fold span{font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,.6);max-width:84px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.widget{position:relative;margin-top:20px;width:100%;aspect-ratio:1/1;max-height:calc(100% - 330px);align-self:center;border-radius:24px;overflow:hidden;z-index:3;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.35);background:#111}
+.widget .wshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 28%,transparent 45%,rgba(5,5,15,.9) 100%)}
+.widget .wlogo{position:absolute;top:14px;left:14px;z-index:2}
+.widget .wnow{position:absolute;top:14px;right:14px;z-index:2;font-size:12px;font-weight:600;background:rgba(0,0,0,.35);padding:4px 9px;border-radius:10px}
+.widget .wbody{position:absolute;left:16px;right:16px;bottom:16px;z-index:2}
+.widget .wname{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.widget .act{margin:3px 0 8px}
+.widget .wmsg{background:rgba(14,14,40,.8);border-radius:16px 16px 16px 4px;padding:9px 11px;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.wlabel{position:relative;text-align:center;font-size:12px;z-index:3;text-shadow:0 1px 3px rgba(0,0,0,.6);margin-top:7px}
+.search{position:relative;align-self:center;margin-top:14px;height:30px;padding:0 13px;border-radius:15px;background:rgba(150,150,160,.42);backdrop-filter:blur(20px);display:flex;align-items:center;gap:5px;font-size:14px;z-index:3}
+.dock{position:relative;margin-top:auto;margin-left:-10px;margin-right:-10px;height:94px;border-radius:32px;background:rgba(150,150,160,.38);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;justify-content:space-around;align-items:center;z-index:3}
+.dock button{width:60px;height:60px;border-radius:15px;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ---------- call: incoming ---------- */
+.call{background:#2a2c31}
+.poster .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.1) 30%,transparent 50%,rgba(0,0,0,.55) 78%,rgba(0,0,0,.8) 100%)}
+.blurbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(36px) saturate(1.05) brightness(.6);transform:scale(1.1)}
+.brandtop{position:absolute;top:var(--top);left:0;right:0;display:flex;justify-content:center;z-index:5;height:76px;align-items:center}
+.who-c{position:absolute;top:calc(var(--top) + 100px);left:16px;right:16px;text-align:center;z-index:4}
+.sim{display:inline-flex;align-items:center;gap:0;font-size:18px;color:rgba(255,255,255,.72);font-weight:500;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.who-c h2{margin:4px 0 0;font-size:38px;font-weight:600;letter-spacing:-.02em;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+.cav{width:150px;height:150px;border-radius:50%;margin:30px auto 0;box-shadow:0 14px 50px rgba(0,0,0,.45);position:relative}
+.qa{position:absolute;left:34px;right:34px;bottom:calc(150px + var(--bot));display:flex;justify-content:space-between;z-index:4}
+.qa div{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14.5px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.qa span{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+.slide{position:absolute;left:30px;right:30px;bottom:calc(44px + var(--bot));height:74px;border-radius:37px;background:rgba(30,32,36,.82);backdrop-filter:blur(16px);z-index:4;overflow:hidden;touch-action:none}
+.slide .lab{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding-left:60px;font-size:22px;color:transparent;
+  background:linear-gradient(90deg,#7a7d84 0%,#7a7d84 40%,#e2e4e8 50%,#7a7d84 60%,#7a7d84 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;animation:shine 2.4s linear infinite}
+@keyframes shine{from{background-position:100% 0}to{background-position:-50% 0}}
+.slide .knob{position:absolute;left:6px;top:6px;width:62px;height:62px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;cursor:grab}
+
+/* ---------- call: video ---------- */
+.vtop{position:absolute;top:0;left:0;right:0;padding:calc(var(--top) + 4px) 16px 40px;background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);z-index:5;display:flex;justify-content:space-between;align-items:flex-start}
+.vtop .nm{font-size:20px;font-weight:600;text-shadow:0 1px 8px rgba(0,0,0,.5);margin-top:10px}
+.vtop .tm{font-size:14px;color:rgba(255,255,255,.8);font-variant-numeric:tabular-nums;margin-top:2px}
+.pip{width:96px;height:144px;border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(160deg,#3b3f4a,#1b1d24);box-shadow:0 8px 24px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);display:flex;align-items:flex-end;justify-content:center;flex:none}
+.pip svg{opacity:.55}
+.vbar{position:absolute;left:16px;right:16px;bottom:calc(24px + var(--bot));height:84px;border-radius:42px;background:rgba(40,40,46,.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;justify-content:space-around;align-items:center;z-index:5;padding:0 8px}
+.vbar button{width:58px;height:58px;border-radius:50%;border:0;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.vbar button.on{background:#fff}
+.vbar .end{background:#ff3b30}
+.ended{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);font-size:20px;font-weight:600}
+.ended small{font-size:14px;color:var(--muted);font-weight:400}
+
+/* ---------- call: audio (FaceTime-style profile photo) ---------- */
+.acall .who-c{top:calc(var(--top) + 60px)}
+.acall .cav{width:96px;height:96px;margin:0 auto 12px}
+.acall h2{font-size:30px;margin:0}
+.acall .tm{font-size:16px;color:rgba(255,255,255,.7);margin-top:4px;font-variant-numeric:tabular-nums}
+.pad{position:absolute;left:44px;right:44px;bottom:calc(150px + var(--bot));display:grid;grid-template-columns:repeat(3,1fr);row-gap:22px;z-index:4}
+.pad div{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.9)}
+.pad button{width:68px;height:68px;border-radius:50%;border:0;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px)}
+.pad button.on{background:#f4f4f6;color:#000}
+.endbtn{position:absolute;left:50%;bottom:calc(52px + var(--bot));transform:translateX(-50%);width:72px;height:72px;border-radius:50%;border:0;background:#ff3b30;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:4}
+
+/* ---------- editing ---------- */
+.editing [data-edit]{outline:1.5px dashed rgba(157,92,255,.9);outline-offset:2px;cursor:text;border-radius:4px}
+.editing [data-edit]:focus{outline-style:solid;background:rgba(123,47,242,.15)}
+.editing [data-upload]{cursor:copy}
+.editing [data-upload]::after{content:"Cambiar imagen";position:absolute;font:600 11px var(--ui);background:var(--violet);color:#fff;padding:4px 8px;border-radius:8px;z-index:20;pointer-events:none;white-space:nowrap}
+.editing .bgup::after{top:calc(var(--top) + 110px);left:50%;transform:translateX(-50%)}
+.editing .row .pic::after,.editing .who .av::after,.editing .cav::after{left:4px;top:4px;font-size:9px;padding:2px 5px}
+.bgup{position:absolute;inset:0}
+
+/* ---------- creator panel ---------- */
+.panel{width:380px;flex:none;height:100%;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 18px 40px;font-size:13.5px;font-family:"Inter",var(--ui)}
+.panel[hidden]{display:none!important}
+.panel h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;font-weight:600}
+.panel .ph{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.panel p.hint{color:var(--muted);line-height:1.45;margin:6px 0 0}
+.scr{display:grid;grid-template-columns:1fr auto;gap:6px}
+.scr button.go{text-align:left;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);cursor:pointer}
+.scr button.go.on{border-color:var(--violet);background:rgba(123,47,242,.18)}
+.btn{padding:8px 11px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);cursor:pointer;white-space:nowrap}
+.btn:hover,.scr button.go:hover{border-color:rgba(157,92,255,.6)}
+.btn.dng{color:#ff8a8a}
+.btn:focus-visible,.scr button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--violet-hi);outline-offset:1px}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;min-width:0}
+.fld label{font-size:11.5px;color:var(--muted)}
+.fld input,.fld textarea,.fld select{width:100%;background:#0b0b13;border:1px solid var(--line);color:#fff;border-radius:9px;padding:8px 10px;font:inherit;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+details.card{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+details.card summary{padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;list-style:none}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary .mini{width:28px;height:36px;border-radius:6px;flex:none}
+details.card summary b{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.card summary small{color:var(--violet-hi)}
+details.card .in{padding:0 12px 12px}
+.msgrow{display:grid;grid-template-columns:86px 1fr 28px;gap:6px;margin-bottom:6px;align-items:start}
+.msgrow select,.msgrow textarea,.msgrow input{background:#0b0b13;border:1px solid var(--line);color:#fff;border-radius:8px;padding:6px 7px;font:inherit;font-size:12.5px;width:100%}
+.msgrow textarea{min-height:34px;resize:vertical}
+.x{width:28px;height:30px;border-radius:8px;border:1px solid var(--line);background:none;cursor:pointer;color:var(--muted)}
+.rowbtns{display:flex;gap:6px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(24px + var(--bot));transform:translateX(-50%);background:#fff;color:#000;padding:9px 14px;border-radius:12px;font-size:13px;font-weight:500;z-index:100;box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:calc(100% - 32px)}
+.fab{position:fixed;top:max(14px,env(safe-area-inset-top,0px));left:max(14px,env(safe-area-inset-left,0px));z-index:60;display:flex;gap:6px}
+.fab button{height:34px;padding:0 13px;border-radius:17px;border:1px solid rgba(255,255,255,.18);background:rgba(20,20,32,.85);backdrop-filter:blur(10px);cursor:pointer;font-size:13px;font-family:"Inter",var(--ui)}
+.fab button.pri{background:var(--violet);border-color:var(--violet)}
+body:not(.studio) .fab,body.clean .fab{display:none}
+@media (max-width:520px){.fab{top:42%;left:auto;right:0;flex-direction:column;gap:4px}.fab button{height:30px;padding:0 10px;border-radius:15px 0 0 15px;font-size:12px;opacity:.85}}
+textarea.io{width:100%;min-height:90px;background:#0b0b13;border:1px solid var(--line);color:#fff;border-radius:9px;padding:8px;font:12px ui-monospace,Menlo,monospace}
+@media (max-width:820px){
+  .panel{position:fixed;left:0;right:0;bottom:0;width:auto;height:62%;z-index:70;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(40px + var(--bot));box-shadow:0 -20px 60px rgba(0,0,0,.6)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="stagewrap">
+    <div class="backdrop" id="backdrop"></div>
+    <main class="app navh" id="app">
+      <div id="screen" class="screen"></div>
+      <div class="sb" id="sb"></div>
+    </main>
+  </div>
+  <aside class="panel" id="panel" hidden></aside>
+</div>
+<div class="fab" id="fab">
+  <button type="button" class="pri" id="editBtn">Edit</button>
+  <button type="button" id="cleanBtn">Record</button>
+  <button type="button" id="exitBtn" title="Hide the editor on this device">Exit editor</button>
+</div>
+<input type="file" id="file" accept="image/*,video/*" hidden>
+
+<script>
+/* ==================================================================
+   OWNER ONLY: brand and call videos.
+   Creators never see this in the panel; it can only be changed by editing
+   this file. To add a video, put the .mp4 in the videos/ folder and
+   add a line to VIDEOS (poster = the image shown while it rings).
+================================================================== */
+const BRAND = { name: "FICTIONAL", suffix: ".AI" };
+const VIDEOS = [
+  { label: "Example 1", src: "videos/llamada-1.mp4", poster: "videos/llamada-1.jpg" },
+  { label: "Grandma 1", src: "videos/abuela-1.mp4", poster: "videos/abuela-1.jpg" },
+  { label: "Grandma 2", src: "videos/abuela-2.mp4", poster: "videos/abuela-2.jpg" },
+  { label: "Grandma 3", src: "videos/abuela-3.mp4", poster: "videos/abuela-3.jpg" },
+  { label: "Grandma 4", src: "videos/abuela-4.mp4", poster: "videos/abuela-4.jpg" },
+  { label: "Dog",       src: "videos/perro.mp4",    poster: "videos/perro.jpg" },
+  { label: "Hamster",   src: "videos/hamster.mp4",  poster: "videos/hamster.jpg" }
+];
+/* ================================================================ */
+
+const KEY = "fictional-studio-v4";
+const SCREENS = [
+  ["feed","Feed · character status"],
+  ["chats","Chat list"],
+  ["chat","Chat"],
+  ["chat-custom","Chat with custom background"],
+  ["home","iOS home screen widget"],
+  ["call","Call (video or voice)"]
+];
+const two = (a,b) => [{t:"them",x:a},{t:"date",x:"OCTOBER 27"},{t:"them",x:b}];
+const DEFAULT = {
+  active:0, time:"9:41", battery:95, showBar:false,
+  callLabel:"Video call", callStyle:"poster",
+  chatBg:"", wall:"",
+  folders:["Folder","Productivity","Social","Apps","Travel","Lifestyle","Chillin","Finance"],
+  chars:[
+    {name:"Grandma Rose", tagline:"Your favorite grandma", activity:"Knitting by the window", time:"1h", unread:2, hue:340, avatar:"", art:"", video:1,
+     post:"Made too many cookies again. You know what that means. Come visit your grandma.",
+     messages:two("Did you eat today? Don't lie to me.","I'm calling you right now. Pick up, sweetheart.")},
+    {name:"Grandma Dottie", tagline:"Bingo champion", activity:"Bingo night", time:"3h", unread:1, hue:30, avatar:"", art:"", video:2,
+     post:"Won bingo three times tonight. The ladies are NOT happy with me.",
+     messages:two("Who was that boy in your photo?","I have questions. I'm calling.")},
+    {name:"Nana June", tagline:"Gardening queen", activity:"Watering the tomatoes", time:"5h", unread:0, hue:120, avatar:"", art:"", video:3,
+     post:"First tomatoes of the season. Nobody touches them until I say so.",
+     messages:two("You never call me anymore.","Fine. I'll call you.")},
+    {name:"Granny Mae", tagline:"Says what she thinks", activity:"Watching her soaps", time:"1d", unread:0, hue:280, avatar:"", art:"", video:4,
+     post:"My show had a twist today and I need to talk to someone about it. Immediately.",
+     messages:two("Your mother told me everything.","Answer the phone.")},
+    {name:"Biscuit", tagline:"Very good boy", activity:"Car ride", time:"2h", unread:3, hue:45, avatar:"", art:"", video:5,
+     post:"We are going in the CAR. Best day of my life. Again.",
+     messages:two("where are you","i miss you. calling now.")},
+    {name:"Peanut", tagline:"Tiny but dramatic", activity:"Running on the wheel", time:"4h", unread:1, hue:25, avatar:"", art:"", video:6,
+     post:"Stuffed 14 seeds in my cheeks. Personal record.",
+     messages:two("you forgot my snacks","we need to talk. picking up?")}
+  ]
+};
+
+let S = load();
+let editing = false, typingFor = -1;
+let callState = "ringing", callStart = 0, callTimer = null;
+const sessionVideos = [];   /* videos uploaded during this visit (not saved) */
+
+function load(){
+  let s = structuredClone(DEFAULT);
+  try{ const raw = localStorage.getItem(KEY); if (raw) s = Object.assign(s, JSON.parse(raw)); }catch(e){}
+  s.chars.forEach(c => { if (c.video == null || c.video < -1) c.video = -1; });
+  return s;
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S, (k,v)=> typeof v==="string" && v.startsWith("video:") ? "" : v)); }
+  catch(e){ toast("Couldn't save: the image is too large for this browser."); }
+}
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function setP(o,p,v){ const ks=p.split("."); const last=ks.pop(); const t=ks.reduce((a,k)=>a[k],o); t[last]=(typeof t[last]==="number" && v!=="" && !isNaN(v)) ? +v : v; }
+const ci = () => Math.max(0, Math.min(S.active, S.chars.length-1));
+const C = () => S.chars[ci()];
+const E = (path, val, tag="span", cls="") => `<${tag}${cls?` class="${cls}"`:""} data-edit="${path}">${esc(val)}</${tag}>`;
+const lastOf = c => { const m=[...c.messages].reverse().find(m=>m.t==="them"||m.t==="me"); return m?m.x:""; };
+
+/* ---------- brand mark ---------- */
+function logo(cls=""){
+  const n = esc(BRAND.name);
+  const k = n.indexOf("O", 1);
+  const word = k > 0 ? n.slice(0,k) + "<em></em>" + n.slice(k+1) : n;
+  return `<div class="logo ${cls}" role="img" aria-label="${n}${esc(BRAND.suffix)}"><div class="sq"><i></i></div><span>${word}<b>${esc(BRAND.suffix)}</b></span></div>`;
+}
+
+/* ---------- icons ---------- */
+const I = {
+  x:`<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>`,
+  bubble:(s=22,w=1.8)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linejoin="round"><path d="M6 4h12a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-7l-5 4v-4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z"/></svg>`,
+  heart:`<svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.1 4 7.4 4c2 0 3.5 1.1 4.6 2.7C13.1 5.1 14.6 4 16.6 4c3.3 0 5.5 3.2 4.4 6.7C19.5 15.4 12 20 12 20z"/></svg>`,
+  pencil:`<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M16.5 3.5l4 4L8 20H4v-4z"/></svg>`,
+  share:`<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6M14 4h6v6M20 4l-9 9"/></svg>`,
+  sound:`<svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h3l5-4v14l-5-4H4z"/><path d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10"/></svg>`,
+  dots:`<svg class="ic" width="24" height="8" viewBox="0 0 24 8" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="4" cy="4" r="2.6"/><circle cx="12" cy="4" r="2.6"/><circle cx="20" cy="4" r="2.6"/></svg>`,
+  send:`<svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 4l17 8-17 8 3-8z"/></svg>`,
+  spark:(s=16)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M10 6l1.6 4.4L16 12l-4.4 1.6L10 18l-1.6-4.4L4 12l4.4-1.6z"/><path d="M18 3l.8 2.2L21 6l-2.2.8L18 9l-.8-2.2L15 6l2.2-.8z"/></svg>`,
+  mic:`<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>`,
+  micoff:`<svg class="ic" width="24" height="26" viewBox="0 0 26 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="8" y="2" width="10" height="17" rx="5"/><path d="M3 14a10 10 0 0 0 20 0M13 24v4M3 3l20 23"/></svg>`,
+  link:`<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>`,
+  home:`<svg class="ic" width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M9 8.5c.4-1.9 1.9-3 3.8-3H25a3 3 0 0 1 2.9 3.6l-2.5 13.5c-.4 2-2 3.4-4 3.4H8.6a3 3 0 0 1-2.9-3.6z" transform="rotate(-6 17 17)"/></svg>`,
+  plus:`<svg class="ic" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 5v20M5 15h20"/></svg>`,
+  search:(s=30,w=2.6)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round"><circle cx="13.5" cy="13.5" r="8.5"/><path d="M20 20l6 6"/></svg>`,
+  user:`<svg class="ic" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="15" cy="10" r="5.2"/><path d="M5.5 26c.2-4.8 4.3-7.8 9.5-7.8s9.3 3 9.5 7.8z" stroke-linejoin="round"/></svg>`,
+  phone:(s=26,c="currentColor")=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${c}"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>`,
+  hang:`<svg class="ic" width="34" height="16" viewBox="0 0 36 16" fill="#fff"><path d="M18 2C10 2 4 4.5 2 7c-.8 1-.6 2.4.2 3.3l1.5 1.6c.8.8 2 1 3 .4l3.4-2c.7-.4 1.1-1.2 1-2l-.3-2.3C12.8 5.4 15.3 5 18 5s5.2.4 7.2 1l-.3 2.3c-.1.8.3 1.6 1 2l3.4 2c1 .6 2.2.4 3-.4l1.5-1.6c.8-.9 1-2.3.2-3.3C32 4.5 26 2 18 2z"/></svg>`,
+  cam:(c="currentColor")=>`<svg class="ic" width="30" height="22" viewBox="0 0 34 26" fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round"><rect x="2" y="4" width="21" height="18" rx="4"/><path d="M23 11l9-5v14l-9-5z"/></svg>`,
+  flip:`<svg class="ic" width="28" height="24" viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h8l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/><path d="M10 13.5a4 4 0 0 1 7-2.3M18 15a4 4 0 0 1-7 1.8"/></svg>`,
+  speaker:`<svg class="ic" width="28" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10"/></svg>`
+};
+
+/* ---------- default artwork until someone uploads their own ---------- */
+function portrait(h){
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="hsl(${h},55%,34%)"/><stop offset=".55" stop-color="hsl(${h+30},45%,16%)"/><stop offset="1" stop-color="hsl(${h+50},40%,7%)"/></linearGradient><radialGradient id="l" cx=".78" cy=".22" r=".6"><stop offset="0" stop-color="hsl(${h+20},90%,75%)" stop-opacity=".55"/><stop offset="1" stop-color="hsl(${h},90%,60%)" stop-opacity="0"/></radialGradient><linearGradient id="s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="hsl(${h},30%,9%)"/><stop offset=".8" stop-color="hsl(${h},30%,14%)"/><stop offset="1" stop-color="hsl(${h+20},70%,60%)"/></linearGradient></defs><rect width="400" height="860" fill="url(#g)"/><rect width="400" height="860" fill="url(#l)"/><g fill="url(#s)"><ellipse cx="205" cy="360" rx="92" ry="112"/><path d="M118 410c10 60 40 92 87 92s77-32 87-92l12 120c70 22 116 70 126 330H-30c10-260 56-308 126-330z"/></g></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+const videoOf = c => c.video >= 0 ? VIDEOS[c.video] : (c.video <= -2 ? sessionVideos[-c.video-2] : null);
+const artOf = c => c.art || c.avatar || (videoOf(c)?.poster) || portrait(c.hue);
+const avOf  = c => c.avatar || c.art || (videoOf(c)?.poster) || portrait(c.hue);
+const imgURL = s => (s||"").startsWith("video:") ? "" : (s||"");
+const cssURL = s => `url('${imgURL(s).replace(/'/g,"%27")}')`;
+function media(src, cls="media"){
+  if (src && src.startsWith("video:")) return `<video class="${cls}" src="${src.slice(6)}" autoplay muted loop playsinline></video>`;
+  return `<img class="${cls}" src="${esc(src)}" alt="">`;
+}
+const bgImg = src => `background:center/cover no-repeat ${cssURL(src)}`;
+
+function statusBar(){
+  return `<span data-edit="time">${esc(S.time)}</span><div class="icons">
+    <svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+    <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 2.3c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8.5.6 10.2 10.2 0 0 0 1.3 3.5l1.2 1.2c1.6-1.5 3.7-2.4 6-2.4zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2a6.8 6.8 0 0 0-9.6 0l1.2 1.2c1-.9 2.2-1.4 3.6-1.4zm0 3.3c-.5 0-1 .2-1.3.6L8.5 11l1.3-1.4c-.3-.4-.8-.6-1.3-.6z"/></svg>
+    <span class="batt">${esc(S.battery)}</span></div>`;
+}
+function nav(on){
+  const unread = S.chars.reduce((a,c)=> a + (+c.unread||0), 0);
+  return `<nav class="nav">
+    <button type="button" data-go="feed" class="${on==="feed"?"on":""}" aria-label="Feed">${I.home}<span class="dot"></span></button>
+    <button type="button" data-go="chats" class="${on==="chats"?"on":""}" aria-label="Chats">${I.bubble(32,2.4)}${unread?`<span class="badge">${unread}</span>`:""}</button>
+    <button type="button" aria-label="Create">${I.plus}</button>
+    <button type="button" aria-label="Search">${I.search()}</button>
+    <button type="button" aria-label="Profile">${I.user}<span class="dot"></span></button>
+  </nav>`;
+}
+
+/* ---------- screens ---------- */
+function feed(){
+  const c = C(), i = ci();
+  return `<div class="screen feed">
+    <div class="bgup" data-upload="chars.${i}.art">${media(artOf(c))}</div>
+    <div class="shade"></div>
+    <div class="head">
+      <button type="button" class="circ" aria-label="Close">${I.x}</button>
+      ${logo()}
+      <button type="button" class="circ" data-go="call" aria-label="Call">${I.phone(20,"#fff")}</button>
+    </div>
+    <div class="tabs">
+      <button type="button" class="tab on">Recommended</button>
+      <button type="button" class="tab">Popular</button>
+      <button type="button" class="tab">Following</button>
+    </div>
+    <div class="side">
+      <button type="button" class="circ tall" data-go="chat" aria-label="Open chat">${I.bubble(24,1.8)}<span>${c.messages.length}</span></button>
+      <button type="button" class="circ" data-like aria-label="Like">${I.heart}</button>
+      <button type="button" class="circ" aria-label="Edit">${I.pencil}</button>
+      <button type="button" class="circ" aria-label="Share">${I.share}</button>
+      <button type="button" class="circ" aria-label="Sound">${I.sound}</button>
+    </div>
+    <div class="stack">
+      <div class="who">
+        <div class="av" data-upload="chars.${i}.avatar" style="${bgImg(avOf(c))}"></div>
+        <div style="min-width:0"><b>${E(`chars.${i}.name`, c.name)}<span>${I.spark(18)}</span></b>${E(`chars.${i}.tagline`, c.tagline, "small")}</div>
+      </div>
+      ${E(`chars.${i}.post`, c.post, "div", "post")}
+    </div>
+    <div class="sayrow">
+      <form class="say" data-say><input id="feedSay" placeholder="Say something..." autocomplete="off"><button type="submit" aria-label="Send">${I.send}</button></form>
+      <button type="button" class="circ" aria-label="More">${I.dots}</button>
+    </div>
+    <div class="prog"><i></i></div>
+    ${nav("feed")}
+  </div>`;
+}
+
+function chats(){
+  return `<div class="screen" style="background:var(--ink)">
+    <div class="list">
+      <div class="listhead">${logo()}<button type="button" class="circ" aria-label="Search">${I.search(20,2.4)}</button></div>
+      <h1>My chats</h1>
+      ${S.chars.map((c,i)=>`<div class="row" data-open="${i}">
+        <div class="pic" data-upload="chars.${i}.avatar" style="${bgImg(avOf(c))}">${+c.unread?`<span class="n">${esc(c.unread)}</span>`:""}</div>
+        <div class="tx">
+          <div class="top">${E(`chars.${i}.name`, c.name, "span","name")}${E(`chars.${i}.time`, c.time, "span","time")}</div>
+          <div class="act">${I.spark(18)}${E(`chars.${i}.activity`, c.activity)}</div>
+          <div class="last">${esc(lastOf(c))}</div>
+        </div></div>`).join("")}
+      <div style="height:20px"></div>
+    </div>
+    ${nav("chats")}
+  </div>`;
+}
+
+function chatView(custom){
+  const c = C(), i = ci();
+  const bg = custom
+    ? `<div class="bgup" data-upload="chatBg">${S.chatBg ? media(S.chatBg) : `<div class="aurora"><i></i><i></i><i></i></div>`}</div>`
+    : `<div class="bgup" data-upload="chars.${i}.art">${media(artOf(c))}</div>`;
+  const list = c.messages.map((m,k)=>{
+    const p = `chars.${i}.messages.${k}`;
+    if (m.t==="date") return E(p+".x", m.x, "div", "date");
+    if (m.t==="sys") return `<div class="sys">${I.link}<div><b data-edit="${p}.h">${esc(m.h||"")}</b> ${E(p+".x", m.x)}</div></div>`;
+    return E(p+".x", m.x, "div", "b "+m.t);
+  }).join("");
+  return `<div class="screen chat">
+    ${bg}<div class="veil"></div>
+    <div class="head">
+      <button type="button" class="circ" data-go="chats" aria-label="Close">${I.x}</button>
+      ${logo()}
+      <button type="button" class="circ" data-go="call" aria-label="Call">${I.phone(20,"#fff")}</button>
+    </div>
+    <div class="msgs" id="msgs"><div class="sp"></div>${list}${typingFor===i?`<div class="typing"><i></i><i></i><i></i></div>`:""}</div>
+    <form class="composer" data-compose>
+      <button type="button" class="circ" aria-label="Suggest">${I.spark(22)}</button>
+      <input id="composeIn" placeholder="Type message" autocomplete="off">
+      <button type="submit" class="circ" aria-label="Send" id="composeBtn">${I.mic}</button>
+    </form>
+  </div>`;
+}
+
+const FOLDER_COLORS = [
+  ["#f2c14e","#ff9f43","#ff5e7a","#f5f5f5","#5ac8fa","#222"],["#4aa3ff","#f5f5f5","#34c759","#f5f5f5","#ff9500"],
+  ["#4aa3ff","#e01e5a","#7b2ff2","#2aabee","#5856d6"],["#2f7bff","#34c759","#ea4335","#333","#f5f5f5"],
+  ["#111","#7b2ff2"],["#34c759","#4aa3ff","#c7c7cc","#2f7bff","#34c759","#ff9500"],
+  ["#123","#e50914","#e60023","#222","#ff6a00","#1a98ff"],["#1546c0","#f5f5f5","#f5f5f5","#7a4a2a","#ff2d55"]];
+function home(){
+  const c = C(), i = ci();
+  const appName = BRAND.name.charAt(0) + BRAND.name.slice(1).toLowerCase() + BRAND.suffix.toLowerCase();
+  return `<div class="screen home">
+    <div class="bgup" data-upload="wall">${S.wall ? media(S.wall) : `<div class="wall"></div>`}</div>
+    <div class="grid">${S.folders.map((f,k)=>`<div class="fold"><div class="box">${(FOLDER_COLORS[k]||[]).map(col=>`<i style="background:${col}"></i>`).join("")}</div>${E(`folders.${k}`, f)}</div>`).join("")}</div>
+    <div class="widget" data-go="chat">
+      <div class="bgup" data-upload="chars.${i}.art">${media(artOf(c))}</div>
+      <div class="wshade"></div>
+      <div class="wlogo">${logo("sm")}</div>
+      <div class="wnow">${E(`chars.${i}.time`, c.time)}</div>
+      <div class="wbody">
+        ${E(`chars.${i}.name`, c.name, "div", "wname")}
+        <div class="act">${I.spark(16)}${E(`chars.${i}.activity`, c.activity)}</div>
+        <div class="wmsg">${esc(lastOf(c))}</div>
+      </div>
+    </div>
+    <div class="wlabel">${esc(appName)}</div>
+    <div class="search">${I.search(15,3)} Search</div>
+    <div class="dock">
+      <button type="button" aria-label="Settings" style="background:linear-gradient(#9a9aa2,#6c6c74)"><svg width="40" height="40" viewBox="0 0 42 42" fill="none" stroke="#e8e8ec" stroke-width="3"><circle cx="21" cy="21" r="13" stroke-dasharray="3 2.4"/><circle cx="21" cy="21" r="7"/></svg></button>
+      <button type="button" data-go="call" aria-label="Phone" style="background:linear-gradient(#6fe27b,#2fbd47)">${I.phone(32,"#fff")}</button>
+      <button type="button" aria-label="Browser" style="background:#fff"><svg width="44" height="44" viewBox="0 0 46 46"><circle cx="23" cy="23" r="20" fill="#2f86f6"/><path d="M23 23l9-10-4 13z" fill="#ff3b30"/><path d="M23 23l-9 10 4-13z" fill="#fff"/></svg></button>
+      <button type="button" data-go="chats" aria-label="Messages" style="background:linear-gradient(#6fe27b,#2fbd47)"><svg width="38" height="34" viewBox="0 0 40 36"><path d="M20 3C10 3 3 9 3 16.5c0 4.3 2.3 8 6 10.5-.4 2.3-1.6 4.5-3.5 6 3.4 0 6.4-1.3 8.4-3.1 1.9.5 4 .8 6.1.8 10 0 17-6 17-14.2S30 3 20 3z" fill="#fff"/></svg></button>
+    </div>
+  </div>`;
+}
+
+/* ---------- call ---------- */
+function call(){
+  const c = C(), i = ci(), v = videoOf(c);
+  if (callState === "live") return v ? videoCall(c, v) : audioCall(c, i);
+  const poster = S.callStyle === "poster";
+  return `<div class="screen call ${poster?"poster":""}">
+    ${poster
+      ? `<div class="bgup" data-upload="chars.${i}.art">${media(artOf(c))}</div><div class="shade"></div>`
+      : `<div class="blurbg" style="background-image:${cssURL(artOf(c))}"></div>`}
+    <div class="brandtop">${logo("sm")}</div>
+    <div class="who-c">
+      <div class="sim">${v ? E("callLabel", S.callLabel) : "Audio call"}…</div>
+      ${E(`chars.${i}.name`, c.name, "h2")}
+      ${poster ? "" : `<div class="cav" data-upload="chars.${i}.avatar" style="${bgImg(avOf(c))}"></div>`}
+    </div>
+    <div class="qa"><div data-go="chat" style="cursor:pointer"><span>${I.bubble(20,2)}</span>Message</div><div data-go="chats" style="cursor:pointer"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l3 2M4 5l3-2.5M20 5l-3-2.5"/></svg></span>Remind Me</div></div>
+    <div class="slide" id="slide"><div class="lab">slide to answer</div><div class="knob" id="knob">${v ? I.cam("#34c759") : I.phone(30,"#34c759")}</div></div>
+  </div>`;
+}
+function videoCall(c, v){
+  return `<div class="screen vcall" style="background:#000">
+    <video class="media" id="callVid" src="${esc(v.src)}" poster="${esc(v.poster||"")}" playsinline preload="auto"></video>
+    <div class="vtop">
+      <div>${logo("sm")}<div class="nm">${esc(c.name)}</div><div class="tm" id="ctimer">00:00</div></div>
+    </div>
+    <div class="vbar">
+      <button type="button" data-toggle aria-label="Mute">${I.micoff}</button>
+      <button type="button" data-toggle aria-label="Camera">${I.cam()}</button>
+      <button type="button" aria-label="Flip camera">${I.flip}</button>
+      <button type="button" class="end" data-hang aria-label="End call">${I.hang}</button>
+    </div>
+  </div>`;
+}
+function audioCall(c, i){
+  const btns = [["Mute",I.micoff],["Speaker",I.speaker],["Handoff",`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-7 7"/><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="currentColor" stroke="none"/></svg>`],
+    ["Contacts",`<svg width="26" height="26" viewBox="0 0 30 30" fill="currentColor"><circle cx="15" cy="10" r="5.5"/><path d="M5 26c.3-5 4.5-8 10-8s9.7 3 10 8z"/></svg>`],["FaceTime",I.cam()],["Keypad",`<span style="font-size:22px;font-weight:500">123</span>`]];
+  return `<div class="screen acall">
+    <div class="blurbg" style="background-image:${cssURL(artOf(c))}"></div>
+    <div class="brandtop">${logo("sm")}</div>
+    <div class="who-c">
+      <div class="cav" data-upload="chars.${i}.avatar" style="${bgImg(avOf(c))}"></div>
+      ${E(`chars.${i}.name`, c.name, "h2")}
+      <div class="tm" id="ctimer">00:00</div>
+    </div>
+    <div class="pad">${btns.map(([l,ic])=>`<div><button type="button" data-toggle aria-label="${l}">${ic}</button>${l}</div>`).join("")}</div>
+    <button type="button" class="endbtn" data-hang aria-label="End call">${I.hang}</button>
+  </div>`;
+}
+
+/* ---------- render ---------- */
+function route(){ const h = location.hash.slice(1); return SCREENS.some(s=>s[0]===h) ? h : "feed"; }
+function render(){
+  const r = route();
+  $("#screen").innerHTML = r==="feed"?feed(): r==="chats"?chats(): r==="chat"?chatView(false): r==="chat-custom"?chatView(true): r==="home"?home(): call();
+  $("#sb").innerHTML = statusBar();
+  $("#app").classList.toggle("with-sb", !!S.showBar);
+  $("#app").classList.toggle("editing", editing);
+  $("#app").querySelectorAll("[data-edit]").forEach(n => { n.contentEditable = editing ? "plaintext-only" : "false"; n.spellcheck = false; });
+  const bd = imgURL(r==="chat-custom" && S.chatBg ? S.chatBg : artOf(C()));
+  $("#backdrop").style.backgroundImage = bd ? cssURL(bd) : "";
+  const m = $("#msgs"); if (m) m.scrollTop = m.scrollHeight;
+  if (r==="call") wireCall(); else stopTimer();
+  document.querySelectorAll(".scr .go").forEach(b => b.classList.toggle("on", b.dataset.screen===r));
+}
+
+/* ---------- interactions inside the app ---------- */
+const app = $("#app");
+app.addEventListener("click", e => {
+  const up = e.target.closest("[data-upload]"), ed = e.target.closest("[data-edit]");
+  if (editing && ed) return;
+  if (editing && up && !e.target.closest("button,input,form,.post,.b,.sys,.date")) { pick(up.dataset.upload); return; }
+  const go = e.target.closest("[data-go]"); if (go){ location.hash = go.dataset.go; return; }
+  const op = e.target.closest("[data-open]"); if (op){ S.active=+op.dataset.open; S.chars[S.active].unread=0; save(); location.hash="chat"; return; }
+  const like = e.target.closest("[data-like]"); if (like){ const on = !like.dataset.on; like.dataset.on = on?"1":""; like.style.color = on ? "#ff4f7b" : ""; like.querySelector("path").setAttribute("fill", on ? "#ff4f7b" : "none"); return; }
+  const tg = e.target.closest("[data-toggle]"); if (tg){ tg.classList.toggle("on"); tg.style.color = tg.classList.contains("on") ? "#000" : ""; return; }
+  if (e.target.closest("[data-hang]")) endCall();
+});
+app.addEventListener("focusout", e => {
+  const n = e.target.closest?.("[data-edit]"); if (!n) return;
+  setP(S, n.dataset.edit, n.innerText.replace(/\n+$/,"").trim()); save(); render(); renderPanel();
+});
+app.addEventListener("keydown", e => { if (e.key==="Enter" && e.target.closest?.("[data-edit]") && !e.shiftKey){ e.preventDefault(); e.target.blur(); } });
+app.addEventListener("input", e => { if (e.target.id==="composeIn") $("#composeBtn").innerHTML = e.target.value ? I.send : I.mic; });
+app.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = e.target, v = f.querySelector("input").value.trim(); if (!v) return;
+  const i = ci(); S.chars[i].messages.push({t:"me", x:v}); save();
+  if (f.hasAttribute("data-say")){ location.hash="chat"; return; }
+  typingFor = i; render(); renderPanel();
+  setTimeout(()=>{ typingFor=-1; if (route().startsWith("chat")) render(); }, 2600);
+});
+
+/* swipe or scroll in the feed moves to the next character */
+let sy = null;
+app.addEventListener("pointerdown", e => { if (route()==="feed" && !editing && !e.target.closest("input,button,form")) sy = e.clientY; });
+app.addEventListener("pointerup", e => { if (sy==null) return; const d = e.clientY - sy; sy = null; if (Math.abs(d) > 60) step(d<0?1:-1); });
+let wheelLock = 0;
+app.addEventListener("wheel", e => { if (route()!=="feed" || Math.abs(e.deltaY) < 30 || Date.now() < wheelLock) return; wheelLock = Date.now()+700; step(e.deltaY>0?1:-1); }, {passive:true});
+function step(d){ S.active = (ci()+d+S.chars.length)%S.chars.length; save(); render(); renderPanel(); }
+
+/* ---------- call flow ---------- */
+function answer(){
+  callState = "live"; callStart = Date.now(); render();
+  const v = $("#callVid");
+  if (v){
+    v.muted = false;
+    v.play().catch(()=>{ v.muted = true; v.play().catch(()=>{}); });
+    v.addEventListener("ended", endCall, {once:true});
+  }
+}
+function endCall(){
+  const t = Math.floor((Date.now()-callStart)/1000);
+  stopTimer();
+  const v = $("#callVid"); if (v) v.pause();
+  const host = $("#screen").firstElementChild; if (!host || host.querySelector(".ended")) return;
+  const o = document.createElement("div"); o.className = "ended";
+  o.innerHTML = `${logo("sm")}<div style="margin-top:10px">Call ended</div><small>${fmt(t)}</small>`;
+  host.appendChild(o);
+  setTimeout(()=>{ callState="ringing"; if (route()==="call") render(); }, 1800);
+}
+const fmt = t => String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");
+function wireCall(){
+  stopTimer();
+  if (callState==="live"){ const f=()=>{ const el=$("#ctimer"); if (el) el.textContent = fmt(Math.floor((Date.now()-callStart)/1000)); }; f(); callTimer=setInterval(f,1000); return; }
+  const knob = $("#knob"), slide = $("#slide"); if (!knob) return;
+  let x0 = null, max = 0, moved = 0;
+  knob.addEventListener("pointerdown", e => { x0 = e.clientX; moved = 0; max = slide.clientWidth - knob.clientWidth - 12; knob.setPointerCapture(e.pointerId); });
+  knob.addEventListener("pointermove", e => {
+    if (x0==null) return;
+    const dx = Math.max(0, Math.min(max, e.clientX - x0)); moved = Math.max(moved, dx);
+    knob.style.transform = `translateX(${dx}px)`;
+    slide.querySelector(".lab").style.opacity = 1 - dx/max;
+  });
+  const end = e => {
+    if (x0==null) return;
+    const dx = Math.max(0, e.clientX - x0); x0 = null;
+    if (dx > max*0.65 || moved < 4){ answer(); }   /* drag across, or just tap the knob */
+    else { knob.style.transition="transform .25s ease-out"; knob.style.transform=""; slide.querySelector(".lab").style.opacity=1; setTimeout(()=>knob.style.transition="",260); }
+  };
+  knob.addEventListener("pointerup", end); knob.addEventListener("pointercancel", end);
+}
+function stopTimer(){ clearInterval(callTimer); callTimer=null; }
+
+/* ---------- uploads ---------- */
+let pickPath = null;
+function pick(path){ pickPath = path; $("#file").accept = path.endsWith(".video") ? "video/*" : "image/*,video/*"; $("#file").value=""; $("#file").click(); }
+$("#file").addEventListener("change", async e => {
+  const f = e.target.files[0]; if (!f || !pickPath) return;
+  if (pickPath.endsWith(".video")){
+    const k = +pickPath.split(".")[1];
+    sessionVideos.push({label:f.name, src:URL.createObjectURL(f), poster:""});
+    S.chars[k].video = -(sessionVideos.length+1);
+    callState = "ringing";
+    toast("Video ready for this visit. To keep it, the owner has to add it to the page.");
+    render(); renderPanel(); return;
+  }
+  let v;
+  if (f.type.startsWith("video/")){ v = "video:" + URL.createObjectURL(f); toast("Video added. Uploaded videos aren't kept after a reload; GIFs are."); }
+  else if (f.type === "image/gif"){ if (f.size > 3.5e6) toast("Large GIF: it may not be kept after a reload."); v = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); }); }
+  else v = await shrink(f);
+  setP(S, pickPath, v); save(); render(); renderPanel();
+});
+function shrink(f){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1200 / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas"); cv.width = Math.round(img.width*k); cv.height = Math.round(img.height*k);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      res(cv.toDataURL("image/jpeg", .86)); URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(f);
+  });
+}
+
+/* ---------- creator panel ---------- */
+const panel = $("#panel");
+const linkFor = s => location.href.split("#")[0] + "#" + s;
+function videoOptions(c){
+  return [`<option value="-1" ${c.video===-1?"selected":""}>No video (voice call)</option>`]
+    .concat(VIDEOS.map((v,k)=>`<option value="${k}" ${c.video===k?"selected":""}>${esc(v.label)}</option>`))
+    .concat(sessionVideos.map((v,k)=>`<option value="${-(k+2)}" ${c.video===-(k+2)?"selected":""}>Uploaded: ${esc(v.label)}</option>`)).join("");
+}
+function renderPanel(){
+  if (panel.hidden) return;
+  const keep = panel.scrollTop, open = new Set([...panel.querySelectorAll("details[open]")].map(d=>d.dataset.k));
+  const i = ci(), c = C();
+  panel.innerHTML = `
+  <div class="ph">${logo("sm")}<button type="button" class="btn" data-close>Close</button></div>
+  <p class="hint">Tap any text with a purple outline to change it. Tap an image or background to upload a photo, GIF or video. Changes are saved in this browser.</p>
+
+  <h3>Screens and links</h3>
+  <div class="scr">${SCREENS.map(([k,l])=>`<button type="button" class="go" data-screen="${k}">${l}</button><button type="button" class="btn" data-copy="${k}">Copy link</button>`).join("")}</div>
+
+  <h3>Character on screen</h3>
+  <div class="fld"><select id="activeSel" aria-label="Character">${S.chars.map((c,k)=>`<option value="${k}" ${k===i?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div>
+  <p class="hint" style="margin-top:0">The feed, chat, widget and call all show this character.</p>
+
+  <h3>Call</h3>
+  <div class="two">
+    <div class="fld"><label for="cs">While ringing</label><select id="cs" data-bind="callStyle"><option value="poster" ${S.callStyle==="poster"?"selected":""}>Full-screen character</option><option value="avatar" ${S.callStyle==="avatar"?"selected":""}>Profile photo (FaceTime)</option></select></div>
+    <div class="fld"><label for="cv">When answered</label><select id="cv" data-video="${i}">${videoOptions(c)}</select></div>
+  </div>
+  <div class="rowbtns"><button type="button" class="btn" data-pick="chars.${i}.video">Try another video</button></div>
+
+  <h3>Characters</h3>
+  ${S.chars.map((c,k)=>`<details class="card" data-k="c${k}" ${open.has("c"+k)?"open":""}>
+    <summary><span class="mini" style="${bgImg(avOf(c))}"></span><b>${esc(c.name)}</b><small>${esc(c.activity)}</small></summary>
+    <div class="in">
+      <div class="two"><div class="fld"><label for="n${k}">Name</label><input id="n${k}" data-bind="chars.${k}.name" value="${esc(c.name)}"></div>
+      <div class="fld"><label for="t${k}">Description</label><input id="t${k}" data-bind="chars.${k}.tagline" value="${esc(c.tagline)}"></div></div>
+      <div class="two"><div class="fld"><label for="a${k}">What they're doing</label><input id="a${k}" data-bind="chars.${k}.activity" value="${esc(c.activity)}"></div>
+      <div class="two" style="gap:6px"><div class="fld"><label for="h${k}">Time</label><input id="h${k}" data-bind="chars.${k}.time" value="${esc(c.time)}"></div>
+      <div class="fld"><label for="u${k}">Unread</label><input id="u${k}" type="number" min="0" data-bind="chars.${k}.unread" value="${esc(c.unread)}"></div></div></div>
+      <div class="fld"><label for="p${k}">Feed post</label><textarea id="p${k}" rows="3" data-bind="chars.${k}.post">${esc(c.post)}</textarea></div>
+      <div class="rowbtns">
+        <button type="button" class="btn" data-pick="chars.${k}.avatar">Profile photo</button>
+        <button type="button" class="btn" data-pick="chars.${k}.art">Large image / GIF</button>
+        ${(c.avatar||c.art)?`<button type="button" class="btn" data-clear="${k}">Remove images</button>`:""}
+        ${S.chars.length>1?`<button type="button" class="btn dng" data-del="${k}">Delete</button>`:""}
+      </div>
+    </div></details>`).join("")}
+  <button type="button" class="btn" data-add>+ Add character</button>
+
+  <h3>Conversation with ${esc(c.name)}</h3>
+  ${c.messages.map((m,k)=>`<div class="msgrow">
+    <select aria-label="Type" data-mtype="${k}">${[["them","Character"],["me","User"],["sys","Notice"],["date","Date"]].map(([v,l])=>`<option value="${v}" ${m.t===v?"selected":""}>${l}</option>`).join("")}</select>
+    <textarea aria-label="Text" data-bind="chars.${i}.messages.${k}.x" rows="1">${esc(m.x)}</textarea>
+    <button type="button" class="x" data-mdel="${k}" aria-label="Delete message">✕</button>
+    ${m.t==="sys"?`<span></span><input aria-label="Notice title" data-bind="chars.${i}.messages.${k}.h" value="${esc(m.h||"")}"><span></span>`:""}
+  </div>`).join("")}
+  <div class="rowbtns"><button type="button" class="btn" data-madd="them">+ Character</button><button type="button" class="btn" data-madd="me">+ User</button><button type="button" class="btn" data-madd="sys">+ Notice</button><button type="button" class="btn" data-madd="date">+ Date</button></div>
+
+  <h3>Backgrounds</h3>
+  <div class="rowbtns">
+    <button type="button" class="btn" data-pick="chatBg">Custom chat background</button>
+    ${S.chatBg?`<button type="button" class="btn" data-bgclear="chatBg">Back to animated</button>`:""}
+    <button type="button" class="btn" data-pick="wall">iOS wallpaper</button>
+    ${S.wall?`<button type="button" class="btn" data-bgclear="wall">Remove</button>`:""}
+  </div>
+
+  <h3>For recording</h3>
+  <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="sbChk" ${S.showBar?"checked":""}> Show status bar (time and battery)</label>
+  <div class="two" style="margin-top:8px"><div class="fld"><label for="tm">Time</label><input id="tm" data-bind="time" value="${esc(S.time)}"></div>
+  <div class="fld"><label for="bt">Battery</label><input id="bt" type="number" min="1" max="100" data-bind="battery" value="${esc(S.battery)}"></div></div>
+  <p class="hint">Record hides these buttons. To bring them back, press H or press and hold the logo for 1.5 seconds.</p>
+
+  <h3>Share a version</h3>
+  <p class="hint" style="margin-top:0">Copy the code and have the other person paste it into their Studio. Images are included.</p>
+  <div class="rowbtns" style="margin:8px 0"><button type="button" class="btn" data-export>Copy code</button><button type="button" class="btn" data-import>Paste code</button><button type="button" class="btn dng" data-reset>Reset everything</button></div>
+  <textarea class="io" id="io" placeholder="Paste another version's code here, then press Paste code"></textarea>`;
+  panel.scrollTop = keep;
+  document.querySelectorAll(".scr .go").forEach(b => b.classList.toggle("on", b.dataset.screen===route()));
+}
+panel.addEventListener("input", e => { const b = e.target.dataset.bind; if (!b) return; setP(S, b, e.target.value); save(); render(); });
+panel.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id==="activeSel"){ S.active=+t.value; callState="ringing"; save(); render(); renderPanel(); }
+  else if (t.id==="sbChk"){ S.showBar=t.checked; save(); render(); }
+  else if (t.dataset.video!=null){ S.chars[+t.dataset.video].video=+t.value; callState="ringing"; save(); render(); }
+  else if (t.dataset.mtype!=null){ const m = C().messages[+t.dataset.mtype]; m.t=t.value; if (m.t==="sys" && !m.h) m.h="+1 Intimacy!"; save(); render(); renderPanel(); }
+  else if (t.dataset.bind) renderPanel();
+});
+panel.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return;
+  const d = t.dataset;
+  if (d.close!=null) return setEdit(false);
+  if (d.screen){ location.hash = d.screen; return; }
+  if (d.copy) return copy(linkFor(d.copy), "Link copied: " + SCREENS.find(s=>s[0]===d.copy)[1]);
+  if (d.pick) return pick(d.pick);
+  if (d.export!=null){ const j = JSON.stringify(S, (k,v)=> typeof v==="string"&&v.startsWith("video:")?"":v); $("#io").value = j; return copy(j, "Code copied"); }
+  if (d.clear!=null){ S.chars[+d.clear].avatar=""; S.chars[+d.clear].art=""; }
+  if (d.bgclear) S[d.bgclear]="";
+  if (d.del!=null){ S.chars.splice(+d.del,1); S.active=Math.min(S.active,S.chars.length-1); }
+  if (d.add!=null){ S.chars.push({name:"New character", tagline:"Who are they?", activity:"Just arrived", time:"now", unread:1, hue:Math.floor(Math.random()*360), avatar:"", art:"", video:-1, post:"First post. Write what they're up to right now.", messages:[{t:"them", x:"Hey. I've been waiting for you to say hi."}]}); S.active=S.chars.length-1; }
+  if (d.mdel!=null) C().messages.splice(+d.mdel,1);
+  if (d.madd){ const nm = C().name.split(" ")[0]; C().messages.push({them:{t:"them",x:"New message"}, me:{t:"me",x:"Your reply"}, sys:{t:"sys",h:"+1 Intimacy!",x:nm+" is enjoying talking with you"}, date:{t:"date",x:"TODAY"}}[d.madd]); }
+  if (d.import!=null){ try{ const n = JSON.parse($("#io").value); if (!n.chars) throw 0; S = Object.assign(structuredClone(DEFAULT), n); toast("Version loaded"); }catch(err){ return toast("That code isn't valid. Copy the full code with Copy code."); } }
+  if (d.reset!=null){ if (!d.sure){ d.sure="1"; t.textContent="Press again to confirm"; return; } S = structuredClone(DEFAULT); toast("Everything is back to the example"); }
+  save(); render(); renderPanel();
+});
+function copy(text, msg){
+  const fb = () => { const io=$("#io"); if (io){ io.value=text; io.select(); } toast("Select and copy the text in the box"); };
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(()=>toast(msg), fb); else fb();
+}
+function toast(m){ const t=document.createElement("div"); t.className="toast"; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(), 2800); }
+function setEdit(on){ editing = on; panel.hidden = !on; $("#editBtn").textContent = on ? "Done" : "Edit"; renderPanel(); render(); }
+$("#editBtn").addEventListener("click", ()=> setEdit(!editing));
+$("#cleanBtn").addEventListener("click", ()=>{ setEdit(false); document.body.classList.add("clean"); toast("Recording mode. Press and hold the logo to bring the buttons back."); });
+let lp;
+app.addEventListener("pointerdown", e => { if (e.target.closest(".logo")) lp = setTimeout(()=>{ if (document.body.classList.contains("studio")) document.body.classList.remove("clean"); else unlockStudio(); }, 1500); });
+addEventListener("pointerup", ()=>clearTimeout(lp));
+addEventListener("keydown", e => {
+  if (e.target.closest("input,textarea,select,[contenteditable='true'],[contenteditable='plaintext-only']")) return;
+  const k = e.key.toLowerCase();
+  if (!document.body.classList.contains("studio")) return;
+  if (k==="h") document.body.classList.toggle("clean");
+  if (k==="e") setEdit(!editing);
+  if (e.key==="ArrowDown") step(1);
+  if (e.key==="ArrowUp") step(-1);
+});
+addEventListener("hashchange", ()=>{ callState="ringing"; render(); });
+/* The editor is hidden from regular visitors. It opens with ?studio in the
+   link, or by pressing and holding the logo for 1.5 seconds. Once opened on
+   a device, that device remembers it until "Exit editor". */
+const STUDIO_KEY = "fictional-studio-editor";
+function unlockStudio(){
+  document.body.classList.add("studio"); document.body.classList.remove("clean");
+  try{ localStorage.setItem(STUDIO_KEY, "1"); }catch(e){}
+  toast("Editor unlocked on this device");
+}
+let studioOn = new URLSearchParams(location.search).has("studio");
+try{ studioOn = studioOn || localStorage.getItem(STUDIO_KEY) === "1"; }catch(e){}
+if (studioOn) unlockStudio.call(null), document.querySelector(".toast")?.remove();
+$("#exitBtn").addEventListener("click", ()=>{
+  setEdit(false); document.body.classList.remove("studio");
+  try{ localStorage.removeItem(STUDIO_KEY); }catch(e){}
+  toast("Editor hidden. Hold the logo for 1.5 seconds to open it again.");
+});
+render();
+</script>
+</body>
+</html>
