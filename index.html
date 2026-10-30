@@ -199,6 +199,8 @@ button{font:inherit;color:inherit}
 .vbar .end{background:#ff3b30}
 .ended{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);font-size:20px;font-weight:600}
 .ended small{font-size:14px;color:var(--muted);font-weight:400}
+.outro{position:absolute;inset:0;z-index:7;background:#000}
+.outro video{width:100%;height:100%;object-fit:cover}
 
 /* ---------- call: audio (FaceTime-style profile photo) ---------- */
 .acall .who-c{top:calc(var(--top) + 60px)}
@@ -701,7 +703,23 @@ function endCall(){
   const t = Math.floor((Date.now()-callStart)/1000);
   stopTimer();
   const v = $("#callVid"); if (v) v.pause();
-  const host = $("#screen").firstElementChild; if (!host || host.querySelector(".ended")) return;
+  const host = $("#screen").firstElementChild; if (!host || host.querySelector(".ended,.outro")) return;
+  playOutro(host, ()=>showEnded(host, t));
+}
+/* outro clip + voice-over, then the "Call ended" card; finishes when the longer of the two ends */
+const OUTRO = { video: "videos/outro.mp4", voice: "videos/outro-vo.mp3" };
+function playOutro(host, done){
+  const o = document.createElement("div"); o.className = "outro";
+  o.innerHTML = `<video src="${OUTRO.video}" muted playsinline preload="auto"></video>`;
+  host.appendChild(o);
+  const vid = o.querySelector("video"), vo = new Audio(OUTRO.voice);
+  let left = 2, fired = false;
+  const finish = () => { if (fired) return; fired = true; clearTimeout(guard); vo.pause(); if (host.isConnected) done(); };
+  const one = () => { if (--left <= 0) finish(); };
+  const guard = setTimeout(finish, 15000);
+  [vid, vo].forEach(m => { m.addEventListener("ended", one, {once:true}); m.addEventListener("error", one, {once:true}); m.play().catch(one); });
+}
+function showEnded(host, t){
   const o = document.createElement("div"); o.className = "ended";
   o.innerHTML = `${logo("sm")}<div style="margin-top:10px">Call ended</div><small>${fmt(t)}</small>`;
   host.appendChild(o);
