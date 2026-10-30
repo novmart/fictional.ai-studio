@@ -297,11 +297,16 @@ const VIDEOS = [
   { label: "Grandma 3", src: "videos/abuela-3.mp4", poster: "videos/abuela-3.jpg" },
   { label: "Grandma 4", src: "videos/abuela-4.mp4", poster: "videos/abuela-4.jpg" },
   { label: "Dog",       src: "videos/perro.mp4",    poster: "videos/perro.jpg" },
-  { label: "Hamster",   src: "videos/hamster.mp4",  poster: "videos/hamster.jpg" }
+  { label: "Hamster",   src: "videos/hamster.mp4",  poster: "videos/hamster.jpg" },
+  { label: "Scream 1",  src: "videos/scream-1.mp4", poster: "videos/scream-1.jpg" },
+  { label: "Scream 2",  src: "videos/scream-2.mp4", poster: "videos/scream-2.jpg" },
+  { label: "Ghost 1",   src: "videos/ghost-1.mp4",  poster: "videos/ghost-1.jpg" },
+  { label: "Kamika 1",  src: "videos/kamika-1.mp4", poster: "videos/kamika-1.jpg" },
+  { label: "Kamika 2",  src: "videos/kamika-2.mp4", poster: "videos/kamika-2.jpg" }
 ];
 /* ================================================================ */
 
-const KEY = "fictional-studio-v4";
+const KEY = "fictional-studio-v6";
 const SCREENS = [
   ["feed","Feed · character status"],
   ["chats","Chat list"],
@@ -334,7 +339,36 @@ const DEFAULT = {
      messages:two("where are you","i miss you. calling now.")},
     {name:"Peanut", tagline:"Tiny but dramatic", activity:"Running on the wheel", time:"4h", unread:1, hue:25, avatar:"", art:"", video:6,
      post:"Stuffed 14 seeds in my cheeks. Personal record.",
-     messages:two("you forgot my snacks","we need to talk. picking up?")}
+     messages:two("you forgot my snacks","we need to talk. picking up?")},
+    /* placeholder characters: no video yet (voice call) until the owner adds one */
+    {name:"Dr. Theo Kane", tagline:"Your future doctor btw", activity:"Night shift at the ER", time:"30m", unread:2, hue:200, avatar:"", art:"", video:-1,
+     post:"36 hours awake. Still smarter than your ex.",
+     messages:two("you skipped breakfast again. i can tell.","as your future doctor, i'm prescribing one phone call. now.")},
+    {name:"Jax", tagline:"Talking for 3 months", activity:"Gym, then nowhere", time:"2h", unread:1, hue:0, avatar:"", art:"", video:-1,
+     post:"Not looking for anything serious. Unless.",
+     messages:two("so what are we","okay calling you, this is too long for text")},
+    {name:"Mom", tagline:"On a cruise in Florida", activity:"Deck 7, buffet", time:"6h", unread:4, hue:330, avatar:"", art:"", video:-1,
+     post:"Your father lost his sunglasses in the ocean. Again.",
+     messages:two("Honey call me when you can","We need to talk about something. Don't panic.")},
+    {name:"Lucien Graves", tagline:"Vampire, 400 years old", activity:"Avoiding the sun", time:"1h", unread:1, hue:350, avatar:"", art:"", video:-1,
+     post:"Another century, another bad Halloween costume of me.",
+     messages:two("you were out late. i noticed.","open the window. i'm calling.")},
+    {name:"Ezra", tagline:"Ghost in your apartment", activity:"Moving your keys", time:"3h", unread:2, hue:180, avatar:"", art:"", video:-1,
+     post:"Yes, I'm the one who keeps opening the cabinet. You're welcome.",
+     messages:two("who was that guy you brought home","i'm not jealous. i'm dead. different thing.")},
+    {name:"Mira Hex", tagline:"Witch next door", activity:"Brewing something", time:"5h", unread:0, hue:280, avatar:"", art:"", video:-1,
+     post:"Full moon tonight. Don't text your ex. I'm serious.",
+     messages:two("i saw your tarot. we need to talk.","picking up? it's about your situationship.")},
+    /* Halloween characters. alt = second clip: each new call switches between video and alt */
+    {name:"Scream", tagline:"Would you be my Halloween?", activity:"Standing outside your window", time:"10m", unread:3, hue:0, avatar:"", art:"", video:7, alt:8,
+     post:"Got you a rose. Ignore the knife, it's for the cake.",
+     messages:two("what's your favorite scary movie","don't hang up. i have a question for you.")},
+    {name:"Ghost", tagline:"Would you be my Halloween?", activity:"On a mission, thinking of you", time:"25m", unread:2, hue:210, avatar:"", art:"", video:9,
+     post:"Mask stays on. The rose is for you though.",
+     messages:two("you went quiet. i don't like that.","calling you. pick up, i'm only asking once.")},
+    {name:"Kamika", tagline:"Would you be my Halloween?", activity:"Lighting candles", time:"40m", unread:1, hue:15, avatar:"", art:"", video:10, alt:11,
+     post:"Candles, roses, and you. That's my whole plan for Halloween.",
+     messages:two("you'll do what i say tonight, right?","good. now answer my call.")}
   ]
 };
 
@@ -399,7 +433,9 @@ function portrait(h){
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="hsl(${h},55%,34%)"/><stop offset=".55" stop-color="hsl(${h+30},45%,16%)"/><stop offset="1" stop-color="hsl(${h+50},40%,7%)"/></linearGradient><radialGradient id="l" cx=".78" cy=".22" r=".6"><stop offset="0" stop-color="hsl(${h+20},90%,75%)" stop-opacity=".55"/><stop offset="1" stop-color="hsl(${h},90%,60%)" stop-opacity="0"/></radialGradient><linearGradient id="s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="hsl(${h},30%,9%)"/><stop offset=".8" stop-color="hsl(${h},30%,14%)"/><stop offset="1" stop-color="hsl(${h+20},70%,60%)"/></linearGradient></defs><rect width="400" height="860" fill="url(#g)"/><rect width="400" height="860" fill="url(#l)"/><g fill="url(#s)"><ellipse cx="205" cy="360" rx="92" ry="112"/><path d="M118 410c10 60 40 92 87 92s77-32 87-92l12 120c70 22 116 70 126 330H-30c10-260 56-308 126-330z"/></g></svg>`;
   return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 }
-const videoOf = c => c.video >= 0 ? VIDEOS[c.video] : (c.video <= -2 ? sessionVideos[-c.video-2] : null);
+let altClip = false;   /* true = play the character's second clip (alt) */
+let clipHash = "";      /* the link the clip choice was last read from */
+const videoOf = c => c.video >= 0 ? VIDEOS[altClip && c.alt >= 0 ? c.alt : c.video] : (c.video <= -2 ? sessionVideos[-c.video-2] : null);
 const artOf = c => c.art || c.avatar || (videoOf(c)?.poster) || portrait(c.hue);
 const avOf  = c => c.avatar || c.art || (videoOf(c)?.poster) || portrait(c.hue);
 const imgURL = s => (s||"").startsWith("video:") ? "" : (s||"");
@@ -594,7 +630,14 @@ function audioCall(c, i){
 }
 
 /* ---------- render ---------- */
-function route(){ const h = location.hash.slice(1); return SCREENS.some(s=>s[0]===h) ? h : "feed"; }
+/* #chat-3, #call-3, #feed-3 open that screen for character 3 (1 = first in the list);
+   #call-13-2 starts with that character's second clip */
+function route(){
+  let h = location.hash.slice(1);
+  const m = h.match(/^(feed|chat|call)-(\d+)(?:-([12]))?$/);
+  if (m){ const k = +m[2]-1; if (S.chars[k] && S.active !== k){ S.active = k; S.chars[k].unread = 0; save(); } if (location.hash !== clipHash){ clipHash = location.hash; altClip = m[3]==="2"; } h = m[1]; }
+  return SCREENS.some(s=>s[0]===h) ? h : "feed";
+}
 function render(){
   const r = route();
   $("#screen").innerHTML = r==="feed"?feed(): r==="chats"?chats(): r==="chat"?chatView(false): r==="chat-custom"?chatView(true): r==="home"?home(): call();
@@ -662,7 +705,7 @@ function endCall(){
   const o = document.createElement("div"); o.className = "ended";
   o.innerHTML = `${logo("sm")}<div style="margin-top:10px">Call ended</div><small>${fmt(t)}</small>`;
   host.appendChild(o);
-  setTimeout(()=>{ callState="ringing"; if (route()==="call") render(); }, 1800);
+  setTimeout(()=>{ callState="ringing"; altClip = !altClip; if (route()==="call") render(); }, 1800);
 }
 const fmt = t => String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");
 function wireCall(){
