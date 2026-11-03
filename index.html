@@ -219,6 +219,8 @@ button{font:inherit;color:inherit}
 
 /* ---------- shared call overlay (builder, fandom eras) ---------- */
 .fcall{position:absolute;inset:0;z-index:12;display:flex;justify-content:center;background:#000;cursor:default}
+.fcall{overflow:hidden}
+.fcall::before{content:"";position:absolute;inset:-60px;background:var(--fcbg) center/cover no-repeat;filter:blur(50px) brightness(.45)}
 .fcall .fc{position:relative;inset:auto;width:100%;max-width:460px;height:100%}
 .fbtns{position:absolute;left:44px;right:44px;bottom:calc(64px + var(--bot));display:flex;justify-content:space-between;z-index:5}
 .fbtns span{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
@@ -279,6 +281,30 @@ button{font:inherit;color:inherit}
 .bcard b{position:absolute;left:14px;bottom:30px;z-index:2;font-size:24px;font-weight:700}
 .bcard small{position:absolute;left:14px;right:10px;bottom:12px;z-index:2;font-size:12.5px;color:rgba(255,255,255,.75)}
 .bmake,.breveal{align-items:center;justify-content:center;text-align:center}
+.binfo{display:flex;flex-direction:column;align-items:center;gap:16px}
+/* laptop version (#builder-pc): full width, bigger type, photo next to the result */
+.bld.wide .bstep{left:0;right:0;margin:0 auto;width:min(1000px,88vw);top:calc(var(--top) + 140px);bottom:60px;gap:22px}
+.bld.wide .bprog{left:0;right:0;margin:0 auto;width:min(1000px,88vw);top:calc(var(--top) + 100px);height:6px}
+.bld.wide .bstep h2{font-size:clamp(36px,4.4vw,60px)}
+.bld.wide .bstep p{font-size:20px}
+.bld.wide .bcount{font-size:16px}
+.bld.wide .chips{gap:14px}
+.bld.wide .chip{font-size:24px;padding:18px 28px;border-radius:34px}
+.bld.wide .bnext{width:300px;height:62px;border-radius:31px;font-size:19px;align-self:flex-end}
+.bld.wide .bpick{width:min(760px,100%);gap:20px}
+.bld.wide .bcard{aspect-ratio:4/3.4}
+.bld.wide .bcard b{font-size:30px;left:20px;bottom:38px}
+.bld.wide .bcard small{font-size:15px;left:20px;bottom:16px}
+.bld.wide .bface{width:300px;height:390px}
+.bld.wide .bmake p{font-size:28px}
+.bld.wide .breveal{flex-direction:row;gap:64px}
+.bld.wide .bpic{width:340px;height:450px;border-radius:32px}
+.bld.wide .binfo{align-items:flex-start;text-align:left;max-width:460px}
+.bld.wide .binfo h2{font-size:clamp(40px,4.6vw,64px)}
+.bld.wide .bmatch{font-size:18px}
+.bld.wide .chips.sm{justify-content:flex-start}
+.bld.wide .chips.sm .chip{font-size:16px;padding:9px 16px}
+.bld.wide .bring{font-size:19px;padding:15px 26px}
 .bface{width:210px;height:270px;border-radius:26px;background:center/cover no-repeat;filter:blur(7px) saturate(1.1);box-shadow:0 0 60px rgba(157,92,255,.45)}
 .bmake p{font-size:22px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
 .bpic{width:230px;height:300px;border-radius:28px;box-shadow:0 0 0 3px rgba(157,92,255,.7),0 0 70px rgba(157,92,255,.5);animation:pop .5s ease-out;position:relative;flex:none}
@@ -413,6 +439,7 @@ const SCREENS = [
   ["call","Call (video or voice)"],
   ["group","Group chat"],
   ["builder","Build your dream boyfriend"],
+  ["builder-pc","Build your dream boyfriend (laptop)"],
   ["eras","Fandom eras (laptop)"]
 ];
 const two = (a,b) => [{t:"them",x:a},{t:"date",x:"OCTOBER 27"},{t:"them",x:b}];
@@ -817,7 +844,7 @@ function audioCall(c, i){
 
 /* ---------- incoming call laid over any screen: p = {name, img, video?}; done runs when it closes ---------- */
 function fakeCall(host, p, done){
-  const o = document.createElement("div"); o.className = "fcall";
+  const o = document.createElement("div"); o.className = "fcall"; o.style.setProperty("--fcbg", cssURL(p.img));
   let t0 = 0, tick = null;
   const close = () => { o.remove(); if (done) done(); };
   const finish = () => {
@@ -927,6 +954,7 @@ function groupCall(){
 let bStep = -1, bTimer = null, bLock = false;
 let bPick = null, bPct = 0;   /* this run's guy and made-up compatibility */
 const bCfg = () => S.builder[S.builder.mode] || S.builder.fictional;
+const isBuilder = () => route()==="builder" || route()==="builder-pc";
 const bOpts = st => String(st.o || "").split(",").map(s => s.trim()).filter(Boolean);
 /* start a run: next guy of the chosen pool, new compatibility between 86 and 99 */
 function bStart(mode){
@@ -951,10 +979,10 @@ function builderView(){
   else if (bStep === n) body = `<div class="bstep bmake"><div class="bface" id="bface" style="${bgImg(bPick.img)}"></div><h2>Finding your match…</h2><p id="bpct">0%</p></div>`;
   else body = `<div class="bstep breveal">
       <div class="bpic" style="${bgImg(bPick.img)}"></div>
-      <div class="bmatch">${bPct}% COMPATIBLE WITH YOU</div><h2>${esc(bPick.name)}</h2>
+      <div class="binfo"><div class="bmatch">${bPct}% COMPATIBLE WITH YOU</div><h2>${esc(bPick.name)}</h2>
       <div class="chips sm">${b.steps.map(st=>`<span class="chip on">${esc(bOpts(st)[st.s] || "")}</span>`).join("")}</div>
-      <div class="bring">${I.phone(20,"#fff")} He's calling you…</div></div>`;
-  return `<div class="screen bld" id="bld"><div class="brandtop">${logo("sm")}</div>
+      <div class="bring">${I.phone(20,"#fff")} He's calling you…</div></div></div>`;
+  return `<div class="screen bld${route()==="builder-pc" ? " wide" : ""}" id="bld"><div class="brandtop">${logo("sm")}</div>
     ${bStep >= 0 && bStep < n ? `<div class="bprog"><i style="transform:scaleX(${(bStep+1)/n})"></i></div>` : ""}${body}</div>`;
 }
 function wireBuilder(){
@@ -966,9 +994,9 @@ function wireBuilder(){
     if (bStep < 0){ const c = e.target.closest("[data-bmode]"); if (c) bStart(c.dataset.bmode); return; }
     if (bStep < n){
       bLock = true; el.querySelectorAll(".chip")[b.steps[bStep].s]?.classList.add("on");
-      return setTimeout(() => { bLock = false; bStep++; if (route()==="builder") render(); }, 600);
+      return setTimeout(() => { bLock = false; bStep++; if (isBuilder()) render(); }, 600);
     }
-    if (bStep > n && !el.querySelector(".fcall")) fakeCall(el, {name: bPick.name.split(",")[0], img: bPick.img, video: bPick.video}, () => { bStep = -1; if (route()==="builder") render(); });
+    if (bStep > n && !el.querySelector(".fcall")) fakeCall(el, {name: bPick.name.split(",")[0], img: bPick.img, video: bPick.video}, () => { bStep = -1; if (isBuilder()) render(); });
   });
   if (bStep === n && !bTimer){
     const faces = b.pool.map(p => p.img).concat(b.faces).filter(Boolean); let t = 0;
@@ -976,7 +1004,7 @@ function wireBuilder(){
       t++; const f = $("#bface"), p = $("#bpct");
       if (f) f.style.backgroundImage = cssURL(faces[t % faces.length]);
       if (p) p.textContent = Math.min(bPct, Math.round(t*bPct/18)) + "%";
-      if (t >= 18){ clearInterval(bTimer); bTimer = null; bStep = n+1; if (route()==="builder") render(); }
+      if (t >= 18){ clearInterval(bTimer); bTimer = null; bStep = n+1; if (isBuilder()) render(); }
     }, 180);
   }
 }
@@ -1027,18 +1055,18 @@ function route(){
 function render(){
   const r = route();
   $("#screen").innerHTML = r==="feed"?feed(): r==="chats"?chats(): r==="chat"?chatView(false): r==="chat-custom"?chatView(true): r==="home"?home():
-    r==="group"?groupView(): r==="builder"?builderView(): r==="eras"?erasView(): call();
-  $("#app").classList.toggle("wide", r==="eras");
+    r==="group"?groupView(): r==="builder"||r==="builder-pc"?builderView(): r==="eras"?erasView(): call();
+  $("#app").classList.toggle("wide", r==="eras" || r==="builder-pc");
   $("#sb").innerHTML = statusBar();
   $("#app").classList.toggle("with-sb", !!S.showBar);
   $("#app").classList.toggle("editing", editing);
   $("#app").querySelectorAll("[data-edit]").forEach(n => { n.contentEditable = editing ? "plaintext-only" : "false"; n.spellcheck = false; });
-  const bd = imgURL(r==="chat-custom" && S.chatBg ? S.chatBg : r==="group" ? (S.group.members[0]?.img || artOf(C())) : r==="builder" ? (bPick?.img || S.builder.fictional.pool[0]?.img) : artOf(C()));
+  const bd = imgURL(r==="chat-custom" && S.chatBg ? S.chatBg : r==="group" ? (S.group.members[0]?.img || artOf(C())) : isBuilder() ? (bPick?.img || S.builder.fictional.pool[0]?.img) : artOf(C()));
   $("#backdrop").style.backgroundImage = bd ? cssURL(bd) : "";
   const m = $("#msgs"); if (m) m.scrollTop = m.scrollHeight;
   if (r==="call") wireCall(); else stopTimer();
   if (r==="group") wireGroup();
-  if (r==="builder") wireBuilder();
+  if (isBuilder()) wireBuilder();
   if (r==="eras") wireEras();
   document.querySelectorAll(".scr .go").forEach(b => b.classList.toggle("on", b.dataset.screen===r));
 }
@@ -1235,7 +1263,7 @@ function renderPanel(){
 
   <h3>Screens and links</h3>
   <div class="scr">${SCREENS.map(([k,l])=>`<button type="button" class="go" data-screen="${k}">${l}</button><button type="button" class="btn" data-copy="${k}">Copy link</button>`).join("")}</div>
-  ${{group:groupPanel, builder:builderPanel, eras:erasPanel}[route()]?.() || ""}
+  ${{group:groupPanel, builder:builderPanel, "builder-pc":builderPanel, eras:erasPanel}[route()]?.() || ""}
 
   <h3>Character on screen</h3>
   <div class="fld"><select id="activeSel" aria-label="Character">${S.chars.map((c,k)=>`<option value="${k}" ${k===i?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div>
