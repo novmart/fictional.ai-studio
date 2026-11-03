@@ -214,6 +214,90 @@ button{font:inherit;color:inherit}
 .pad button.on{background:#f4f4f6;color:#000}
 .endbtn{position:absolute;left:50%;bottom:calc(52px + var(--bot));transform:translateX(-50%);width:72px;height:72px;border-radius:50%;border:0;background:#ff3b30;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:4}
 
+/* ---------- shared call overlay (builder, fandom eras) ---------- */
+.fcall{position:absolute;inset:0;z-index:12;display:flex;justify-content:center;background:#000;cursor:default}
+.fcall .fc{position:relative;inset:auto;width:100%;max-width:460px;height:100%}
+.fbtns{position:absolute;left:44px;right:44px;bottom:calc(64px + var(--bot));display:flex;justify-content:space-between;z-index:5}
+.fbtns span{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.fbtns button{width:76px;height:76px;border-radius:50%;border:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fbtns .no{background:#ff3b30}
+.fbtns .yes{background:#34c759}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- group chat ---------- */
+.ghead{position:absolute;top:var(--top);left:14px;right:14px;height:56px;display:flex;align-items:center;gap:12px;z-index:6}
+.gstack{display:flex;flex:none;padding-left:12px}
+.gstack span{width:36px;height:36px;border-radius:50%;border:2px solid #0a0820;margin-left:-12px;position:relative;background-color:#222}
+.ghead .gt{flex:1;min-width:0;line-height:1.2}
+.ghead .gt b{display:block;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ghead .gt small{font-size:12.5px;color:var(--muted)}
+.gchat .msgs{top:calc(var(--top) + 60px);cursor:pointer}
+.gm{display:flex;gap:8px;align-items:flex-end;max-width:84%;align-self:flex-start;animation:pop .25s ease-out}
+.ga{width:30px;height:30px;border-radius:50%;flex:none;background-color:#222}
+.gm .gb{background:rgba(18,18,38,.92);border-radius:20px 20px 20px 5px;padding:7px 12px 9px;font-size:16px;line-height:1.3;word-wrap:break-word;min-width:0;backdrop-filter:blur(8px)}
+.gn{display:block;font-size:12.5px;font-weight:600;margin-bottom:2px}
+.gm.me{align-self:flex-end}
+.gm.me .gb{background:#e7e7ea;color:#111;border-radius:20px 20px 5px 20px}
+.gsys{align-self:center;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.62);text-align:center;max-width:86%;animation:pop .25s ease-out}
+.gjoin{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:20px;background:#34c759;color:#fff;padding:9px 16px;font-size:15px;font-weight:600;cursor:pointer}
+.gtyping{align-self:flex-start;display:flex;align-items:flex-end;gap:8px;font-size:12.5px;color:rgba(255,255,255,.55)}
+.gtyping>span:last-child{align-self:center}
+.gcall{position:absolute;inset:0;z-index:10;background:#0d0d12;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:6px;padding:calc(var(--top) + 58px) 6px calc(122px + var(--bot))}
+.gcall .tile{position:relative;border-radius:18px;overflow:hidden;background-color:#222;box-shadow:inset 0 0 0 3px transparent;transition:box-shadow .25s}
+.gcall .tile.span{grid-column:span 2}
+.gcall .tile.talk{box-shadow:inset 0 0 0 3px #34c759}
+.gcall .tile b{position:absolute;left:10px;bottom:8px;font-size:14px;font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.gcall .gtop{position:absolute;top:var(--top);left:0;right:0;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px}
+.gcall .gtop span{font-size:13px;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums}
+.gpick{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);cursor:pointer;padding:0}
+
+/* ---------- build your dream boyfriend ---------- */
+.bld{background:radial-gradient(500px 400px at 80% 0%,rgba(123,47,242,.35),transparent 60%),linear-gradient(170deg,#120a26,#05050f 65%);cursor:pointer}
+.bprog{position:absolute;top:calc(var(--top) + 84px);left:24px;right:24px;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;z-index:5}
+.bprog i{position:absolute;inset:0;background:linear-gradient(90deg,#7b2ff2,#c084fc);transform-origin:left;transition:transform .45s ease}
+.bstep{position:absolute;left:24px;right:24px;top:calc(var(--top) + 112px);bottom:calc(36px + var(--bot));display:flex;flex-direction:column;gap:16px;animation:pop .35s ease-out;z-index:4}
+.bstep h2{font-size:32px;line-height:1.1;margin:0;letter-spacing:-.02em;font-weight:700}
+.bstep p{margin:0;color:var(--muted);font-size:16px}
+.bcount{color:var(--violet-hi);font-size:14px;font-weight:600;letter-spacing:.02em}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.chip{padding:13px 18px;border-radius:24px;border:1.5px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);font-size:17px;transition:background .2s,border-color .2s,transform .2s,box-shadow .2s}
+.chip.on{background:var(--violet);border-color:var(--violet-hi);box-shadow:0 0 0 4px rgba(157,92,255,.28);transform:scale(1.05)}
+.chips.sm{justify-content:center}
+.chips.sm .chip{padding:7px 12px;font-size:13.5px;transform:none;box-shadow:none}
+.bnext{margin-top:auto;height:56px;border-radius:28px;border:0;background:#fff;color:#000;font-size:17px;font-weight:600;cursor:pointer;flex:none}
+.bfaces{display:flex;gap:10px;margin:6px 0 30px}
+.bfaces span{flex:1;aspect-ratio:3/4;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.4);background-color:#222}
+.bfaces span:nth-child(2){transform:translateY(24px)}
+.bmake,.breveal{align-items:center;justify-content:center;text-align:center}
+.bface{width:210px;height:270px;border-radius:26px;background:center/cover no-repeat;filter:blur(7px) saturate(1.1);box-shadow:0 0 60px rgba(157,92,255,.45)}
+.bmake p{font-size:22px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.bpic{width:230px;height:300px;border-radius:28px;box-shadow:0 0 0 3px rgba(157,92,255,.7),0 0 70px rgba(157,92,255,.5);animation:pop .5s ease-out;position:relative;flex:none}
+.bmatch{font-size:15px;font-weight:700;color:#34c759;letter-spacing:.02em}
+.bring{display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:12px 20px;border-radius:26px;background:#34c759;font-weight:600;font-size:16px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* ---------- fandom eras (laptop, full width) ---------- */
+.app.wide{max-width:none;box-shadow:none}
+.eras{background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.estage{display:flex;align-items:center;justify-content:center;width:100%;height:100%;transition:opacity .6s}
+.estage.fade{opacity:0}
+.egrid{display:grid;grid-template-columns:repeat(2,auto);gap:6vh 12vw;font-size:clamp(34px,8vmin,120px);font-weight:500;color:#ededed;letter-spacing:-.02em}
+.egrid.sites{gap:5vh 3vw}
+.egrid .w{position:relative;opacity:0;transition:opacity .35s,transform .35s,color .3s;white-space:nowrap;min-height:1.2em}
+.egrid .w.in{opacity:1}
+.egrid .site{padding:.3em .6em;border-radius:.25em;background:#151518;border:1px solid rgba(255,255,255,.08);text-align:center;transform:scale(.96)}
+.egrid .site.in{transform:none}
+.egrid .w.struck{color:rgba(237,237,237,.45)}
+.egrid .w.struck::after{content:"";position:absolute;left:6%;right:6%;top:46%;height:.07em;border-radius:.04em;background:#ff3b30;transform:scaleX(0);transform-origin:left;animation:strike .35s ease-out forwards}
+.egrid .w small{position:absolute;left:0;right:0;top:calc(100% + .2em);font-size:.26em;color:#ff6b6b;opacity:0;transition:opacity .3s .25s;white-space:nowrap}
+.egrid .w.struck small{opacity:1}
+.elogo{animation:fadein 1.2s ease-out both}
+.elogo .logo{--s:clamp(40px,9vmin,110px)}
+.ehint{position:absolute;bottom:22px;left:0;right:0;text-align:center;color:rgba(255,255,255,.28);font-size:13px}
+body.clean .ehint{display:none}
+@keyframes strike{to{transform:scaleX(1)}}
+@keyframes fadein{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+
 /* ---------- editing ---------- */
 .editing [data-edit]{outline:1.5px dashed rgba(157,92,255,.9);outline-offset:2px;cursor:text;border-radius:4px}
 .editing [data-edit]:focus{outline-style:solid;background:rgba(123,47,242,.15)}
@@ -316,7 +400,10 @@ const SCREENS = [
   ["chat","Chat"],
   ["chat-custom","Chat with custom background"],
   ["home","iOS home screen widget"],
-  ["call","Call (video or voice)"]
+  ["call","Call (video or voice)"],
+  ["group","Group chat"],
+  ["builder","Build your dream boyfriend"],
+  ["eras","Fandom eras (laptop)"]
 ];
 const two = (a,b) => [{t:"them",x:a},{t:"date",x:"OCTOBER 27"},{t:"them",x:b}];
 const DEFAULT = {
@@ -372,7 +459,51 @@ const DEFAULT = {
     {name:"Kamika", tagline:"Would you be my Halloween?", activity:"Lighting candles", time:"40m", unread:1, hue:15, avatar:"", art:"", video:10, alt:11,
      post:"Candles, roses, and you. That's my whole plan for Halloween.",
      messages:two("you'll do what i say tonight, right?","good. now answer my call.")}
-  ]
+  ],
+  /* group chat: w = member number, "me", "sys" (notice) or "call" (notice with a Join button) */
+  group:{ name:"Night Court 🌙", speed:1.6,
+    members:[
+      {n:"Azriel", img:"chars/azriel.png", col:"#8fb8ff"},
+      {n:"Elain",  img:"chars/elain.png",  col:"#f7b6d2"},
+      {n:"Gwyn",   img:"chars/gwyn.png",   col:"#ff9f6b"},
+      {n:"Lucien", img:"",                 col:"#ff6a3d"}],
+    script:[
+      {w:"sys", x:"You added Azriel, Elain, Gwyn and Lucien"},
+      {w:"3", x:"who made this group"},
+      {w:"me", x:"be nice. it's for solstice plans 🎄"},
+      {w:"2", x:"omg hi Elain 👋"},
+      {w:"1", x:"hi Gwyn 🌸"},
+      {w:"0", x:"..."},
+      {w:"3", x:"Elain, did you get the flowers I sent?"},
+      {w:"0", x:"She's busy."},
+      {w:"3", x:"I was asking my MATE, shadowsinger"},
+      {w:"2", x:"this is getting interesting 🍿"},
+      {w:"1", x:"can we not do this in the group chat"},
+      {w:"0", x:"Gwyn. Training at dawn?"},
+      {w:"2", x:"...yes 😳"},
+      {w:"1", x:"oh."},
+      {w:"sys", x:"Azriel left the group"},
+      {w:"call", x:"Lucien started a group call"}]},
+  /* build your dream boyfriend: acted, not interactive. Each tap highlights the option set in s and moves on */
+  builder:{ mode:"dream",
+    dream:{ title:"Build your dream partner", sub:"Pick everything. We'll find him for you.", name:"Ethan, 24", tag:"97% MATCH", img:"chars/dreamman-suit.png", video:"",
+      faces:["chars/dreamman-blonde.png","chars/dreamman-dark.png","chars/dreamman-suit.png","chars/rhysand.png"],
+      steps:[
+        {q:"Hair color?", o:"Blonde, Brunette, Black, Red", s:1},
+        {q:"Eye color?", o:"Blue, Green, Brown, Grey", s:2},
+        {q:"His style?", o:"Old money, Streetwear, Gym rat, Soft boy", s:0},
+        {q:"Personality type?", o:"Protective, Flirty, Golden retriever, Tsundere, Villain, Nerdy", s:0},
+        {q:"Age range?", o:"21–24, 25–28, 29–32", s:0}]},
+    known:{ title:"Build your dream boyfriend", sub:"From any world you want.", name:"Satoru Gojo", tag:"98% MATCH", img:"chars/gojo.png", video:"",
+      faces:["chars/megumi.png","chars/sukuna.png","chars/geto.png","chars/yuta.png","chars/gojo-2.png"],
+      steps:[
+        {q:"What world is he from?", o:"Anime, Fantasy books, Movies, Video games", s:0},
+        {q:"Hair?", o:"White, Black, Red, Blonde", s:0},
+        {q:"Eyes?", o:"Blue, Green, Gold, Red", s:0},
+        {q:"Personality type?", o:"Cocky, Cold, Protective, Chaotic, Sweet", s:0},
+        {q:"How does he talk to you?", o:"Teasing, Sweet, Possessive, Unbothered", s:0}]}},
+  /* fandom eras: laptop screen that plays by itself and ends with a call. who = "known", "dream" or "c" + character number */
+  eras:{ words:"fanart, fanfic, fanedit, fanart", sites:"wattpad, tumblr, AO3, c.ai", under:"he never answered", who:"known" }
 };
 
 let S = load();
@@ -618,9 +749,11 @@ function videoCall(c, v){
     </div>
   </div>`;
 }
-function audioCall(c, i){
-  const btns = [["Mute",I.micoff],["Speaker",I.speaker],["Handoff",`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-7 7"/><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="currentColor" stroke="none"/></svg>`],
+/* the six round buttons of a voice call */
+const PAD = [["Mute",I.micoff],["Speaker",I.speaker],["Handoff",`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-7 7"/><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="currentColor" stroke="none"/></svg>`],
     ["Contacts",`<svg width="26" height="26" viewBox="0 0 30 30" fill="currentColor"><circle cx="15" cy="10" r="5.5"/><path d="M5 26c.3-5 4.5-8 10-8s9.7 3 10 8z"/></svg>`],["FaceTime",I.cam()],["Keypad",`<span style="font-size:22px;font-weight:500">123</span>`]];
+const padHTML = () => PAD.map(([l,ic])=>`<div><button type="button" data-toggle aria-label="${l}">${ic}</button>${l}</div>`).join("");
+function audioCall(c, i){
   return `<div class="screen acall">
     <div class="blurbg" style="background-image:${cssURL(artOf(c))}"></div>
     <div class="brandtop">${logo("sm")}</div>
@@ -629,10 +762,204 @@ function audioCall(c, i){
       ${E(`chars.${i}.name`, c.name, "h2")}
       <div class="tm" id="ctimer">00:00</div>
     </div>
-    <div class="pad">${btns.map(([l,ic])=>`<div><button type="button" data-toggle aria-label="${l}">${ic}</button>${l}</div>`).join("")}</div>
+    <div class="pad">${padHTML()}</div>
     <button type="button" class="endbtn" data-hang aria-label="End call">${I.hang}</button>
   </div>`;
 }
+
+/* ---------- incoming call laid over any screen: p = {name, img, video?}; done runs when it closes ---------- */
+function fakeCall(host, p, done){
+  const o = document.createElement("div"); o.className = "fcall";
+  let t0 = 0, tick = null;
+  const close = () => { o.remove(); if (done) done(); };
+  const finish = () => {
+    clearInterval(tick); o.querySelector("video")?.pause();
+    o.insertAdjacentHTML("beforeend", `<div class="ended">Call ended<small>${fmt(Math.floor((Date.now()-t0)/1000))}</small></div>`);
+    setTimeout(close, 1800);
+  };
+  const live = () => {
+    t0 = Date.now();
+    o.innerHTML = p.video
+      ? `<div class="fc screen vcall" style="background:#000"><video class="media" src="${esc(p.video)}" playsinline></video>
+          <div class="vtop"><div>${logo("sm")}<div class="nm">${esc(p.name)}</div><div class="tm" data-ftm>00:00</div></div></div>
+          <div class="vbar"><button type="button" data-toggle aria-label="Mute">${I.micoff}</button><button type="button" data-toggle aria-label="Camera">${I.cam()}</button><button type="button" aria-label="Flip camera">${I.flip}</button><button type="button" class="end" data-fend aria-label="End call">${I.hang}</button></div></div>`
+      : `<div class="fc screen acall"><div class="blurbg" style="background-image:${cssURL(p.img)}"></div><div class="brandtop">${logo("sm")}</div>
+          <div class="who-c"><div class="cav" style="${bgImg(p.img)}"></div><h2>${esc(p.name)}</h2><div class="tm" data-ftm>00:00</div></div>
+          <div class="pad">${padHTML()}</div><button type="button" class="endbtn" data-fend aria-label="End call">${I.hang}</button></div>`;
+    tick = setInterval(() => { const el = o.querySelector("[data-ftm]"); if (!o.isConnected) return clearInterval(tick); if (el) el.textContent = fmt(Math.floor((Date.now()-t0)/1000)); }, 1000);
+    const v = o.querySelector("video");
+    if (v){ v.play().catch(() => { v.muted = true; v.play().catch(()=>{}); }); v.addEventListener("ended", finish, {once:true}); }
+    o.querySelector("[data-fend]").addEventListener("click", finish, {once:true});
+  };
+  o.innerHTML = `<div class="fc screen call poster"><div class="bgup">${media(p.img)}</div><div class="shade"></div><div class="brandtop">${logo("sm")}</div>
+    <div class="who-c"><div class="sim">${esc(S.callLabel)}…</div><h2>${esc(p.name)}</h2></div>
+    <div class="fbtns"><span><button type="button" class="no" data-fno aria-label="Decline">${I.hang}</button>Decline</span><span><button type="button" class="yes" data-fyes aria-label="Accept">${I.cam("#fff")}</button>Accept</span></div></div>`;
+  o.querySelector("[data-fyes]").addEventListener("click", live, {once:true});
+  o.querySelector("[data-fno]").addEventListener("click", close, {once:true});
+  host.appendChild(o);
+}
+
+/* ---------- group chat: messages appear one by one, each tap shows the next right away ---------- */
+let gShown = 0, gTyping = -1, gPlaying = false, gTimer = null;
+const gMem = w => S.group.members[+w];
+const isMember = w => /^\d+$/.test(w);
+function gItem(m, k){
+  const p = `group.script.${k}`;
+  if (m.w==="sys" || m.w==="call") return `<div class="gsys">${E(p+".x", m.x)}${m.w==="call" && !editing ? `<button type="button" class="gjoin" data-gjoin>${I.cam("#fff")} Join</button>` : ""}</div>`;
+  if (m.w==="me") return `<div class="gm me">${E(p+".x", m.x, "div", "gb")}</div>`;
+  const mb = gMem(m.w) || {n:"?", img:"", col:"#9d5cff"};
+  return `<div class="gm"><span class="ga" style="${bgImg(mb.img || portrait(30 + +m.w*70))}"></span><div class="gb"><span class="gn" style="color:${esc(mb.col)}">${esc(mb.n)}</span>${E(p+".x", m.x)}</div></div>`;
+}
+function gMsgs(){
+  const g = S.group, n = editing ? g.script.length : gShown;
+  const t = gTyping >= 0 ? g.script[gTyping] : null, who = t && gMem(t.w);
+  return `<div class="sp"></div>${g.script.slice(0, n).map(gItem).join("")}${who ? `<div class="gtyping"><span class="ga" style="${bgImg(who.img || portrait(30 + +t.w*70))}"></span><div class="typing"><i></i><i></i><i></i></div><span>${esc(who.n)} is typing…</span></div>` : ""}`;
+}
+function groupView(){
+  const g = S.group;
+  return `<div class="screen chat gchat">
+    <div class="aurora"><i></i><i></i><i></i></div><div class="veil"></div>
+    <div class="ghead">
+      <button type="button" class="circ" data-go="chats" aria-label="Back">${I.x}</button>
+      <div class="gstack">${g.members.slice(0,4).map((m,k)=>`<span data-upload="group.members.${k}.img" style="${bgImg(m.img || portrait(30 + k*70))}"></span>`).join("")}</div>
+      <div class="gt">${E("group.name", g.name, "b")}<small>${g.members.length} members</small></div>
+      <button type="button" class="circ" data-gjoin aria-label="Group call">${I.cam("#fff")}</button>
+    </div>
+    <div class="msgs" id="msgs">${gMsgs()}</div>
+    <div class="composer">
+      <button type="button" class="circ" aria-label="Suggest">${I.spark(22)}</button>
+      <input placeholder="Message the group" autocomplete="off" aria-label="Message">
+      <button type="button" class="circ" aria-label="Voice message">${I.mic}</button>
+    </div>
+  </div>`;
+}
+function gRender(){ const m = $("#msgs"); if (!m || route()!=="group") return; m.innerHTML = gMsgs(); m.querySelectorAll("[data-edit]").forEach(n => n.contentEditable = "false"); m.scrollTop = m.scrollHeight; }
+function gNext(){
+  clearTimeout(gTimer);
+  const g = S.group, sp = Math.max(.4, +g.speed || 1.6) * 1000;
+  if (gShown >= g.script.length){ gPlaying = false; gTyping = -1; return gRender(); }
+  if (isMember(g.script[gShown].w) && gTyping !== gShown){ gTyping = gShown; gRender(); gTimer = setTimeout(gNext, sp*.55); return; }
+  gTyping = -1; gShown++; gRender();
+  if (gShown < g.script.length) gTimer = setTimeout(gNext, sp*.6); else gPlaying = false;
+}
+function wireGroup(){
+  const m = $("#msgs"); if (!m) return;
+  m.addEventListener("click", e => {
+    if (editing || e.target.closest("[data-gjoin],[data-edit]")) return;
+    if (!gPlaying){ if (gShown >= S.group.script.length) return; gPlaying = true; return gNext(); }
+    gTyping = gShown; gNext();   /* skip the wait: show the next message now */
+  });
+}
+/* members who left or were removed in the messages shown so far don't join the call */
+function groupCall(){
+  const host = $("#screen").firstElementChild; if (!host || host.querySelector(".gcall")) return;
+  clearTimeout(gTimer); gPlaying = false;
+  const said = S.group.script.slice(0, editing ? Infinity : gShown).filter(m => m.w==="sys").map(m => m.x.toLowerCase());
+  const mem = S.group.members.filter(m => { const n = m.n.toLowerCase(); return !said.some(x => x.includes(n+" left") || x.includes("removed "+n)); });
+  const o = document.createElement("div"); o.className = "gcall";
+  o.innerHTML = `<div class="gtop"><b>${esc(S.group.name)}</b><span data-gtm>00:00</span></div>
+    ${mem.map((m,k)=>`<div class="tile${mem.length%2 && k===mem.length-1 ? " span" : ""}" style="${bgImg(m.img || portrait(30 + k*70))}"><b>${esc(m.n)}</b></div>`).join("")}
+    <div class="vbar"><button type="button" data-toggle aria-label="Mute">${I.micoff}</button><button type="button" data-toggle aria-label="Camera">${I.cam()}</button><button type="button" aria-label="Flip camera">${I.flip}</button><button type="button" class="end" data-gend aria-label="End call">${I.hang}</button></div>`;
+  host.appendChild(o);
+  const t0 = Date.now(); let k = 0;
+  const tick = setInterval(() => {
+    if (!o.isConnected) return clearInterval(tick);
+    o.querySelector("[data-gtm]").textContent = fmt(Math.floor((Date.now()-t0)/1000));
+    const ts = o.querySelectorAll(".tile"); ts.forEach(t => t.classList.remove("talk")); if (ts.length) ts[k++ % ts.length].classList.add("talk");
+  }, 1300);
+  o.querySelector("[data-gend]").addEventListener("click", () => {
+    clearInterval(tick);
+    o.insertAdjacentHTML("beforeend", `<div class="ended">Call ended<small>${fmt(Math.floor((Date.now()-t0)/1000))}</small></div>`);
+    setTimeout(() => o.remove(), 1800);
+  }, {once:true});
+}
+
+/* ---------- build your dream boyfriend: acted. Each tap highlights the option set in the panel and moves on ---------- */
+let bStep = -1, bTimer = null, bLock = false;
+const bCfg = () => S.builder[S.builder.mode] || S.builder.dream;
+const bOpts = st => String(st.o || "").split(",").map(s => s.trim()).filter(Boolean);
+function builderView(){
+  const b = bCfg(), n = b.steps.length, M = `builder.${S.builder.mode}`;
+  let body;
+  if (bStep < 0) body = `<div class="bstep">
+      <div class="bfaces">${b.faces.slice(0,3).map(f=>`<span style="${bgImg(f)}"></span>`).join("")}</div>
+      ${E(M+".title", b.title, "h2")}${E(M+".sub", b.sub, "p")}
+      <button type="button" class="bnext">Get started</button></div>`;
+  else if (bStep < n){ const st = b.steps[bStep]; body = `<div class="bstep">
+      <span class="bcount">STEP ${bStep+1} OF ${n}</span>
+      ${E(`${M}.steps.${bStep}.q`, st.q, "h2")}
+      <div class="chips">${bOpts(st).map(o=>`<span class="chip">${esc(o)}</span>`).join("")}</div>
+      <button type="button" class="bnext">Next</button></div>`; }
+  else if (bStep === n) body = `<div class="bstep bmake"><div class="bface" id="bface" style="${bgImg(b.faces[0] || b.img)}"></div><h2>Creating your character…</h2><p id="bpct">0%</p></div>`;
+  else body = `<div class="bstep breveal">
+      <div class="bpic" data-upload="${M}.img" style="${bgImg(b.img)}"></div>
+      ${E(M+".tag", b.tag, "div", "bmatch")}${E(M+".name", b.name, "h2")}
+      <div class="chips sm">${b.steps.map(st=>`<span class="chip on">${esc(bOpts(st)[st.s] || "")}</span>`).join("")}</div>
+      <div class="bring">${I.phone(20,"#fff")} He's calling you…</div></div>`;
+  return `<div class="screen bld" id="bld"><div class="brandtop">${logo("sm")}</div>
+    ${bStep >= 0 && bStep < n ? `<div class="bprog"><i style="transform:scaleX(${(bStep+1)/n})"></i></div>` : ""}${body}</div>`;
+}
+function wireBuilder(){
+  const el = $("#bld"); if (!el) return;
+  const b = bCfg(), n = b.steps.length;
+  el.addEventListener("click", e => {
+    if (e.target.closest(".fcall") || (editing && e.target.closest("[data-edit],[data-upload]")) || bLock) return;
+    if (bStep < 0){ bStep = 0; return render(); }
+    if (bStep < n){
+      bLock = true; el.querySelectorAll(".chip")[b.steps[bStep].s]?.classList.add("on");
+      return setTimeout(() => { bLock = false; bStep++; if (route()==="builder") render(); }, 600);
+    }
+    if (bStep > n && !el.querySelector(".fcall")) fakeCall(el, {name: b.name.split(",")[0], img: b.img, video: b.video}, () => { bStep = -1; if (route()==="builder") render(); });
+  });
+  if (bStep === n && !bTimer){
+    const faces = b.faces.length ? b.faces : [b.img]; let t = 0;
+    bTimer = setInterval(() => {
+      t++; const f = $("#bface"), p = $("#bpct");
+      if (f) f.style.backgroundImage = cssURL(faces[t % faces.length]);
+      if (p) p.textContent = Math.min(97, Math.round(t*97/18)) + "%";
+      if (t >= 18){ clearInterval(bTimer); bTimer = null; bStep = n+1; if (route()==="builder") render(); }
+    }, 180);
+  }
+}
+
+/* ---------- fandom eras: plays by itself on a laptop (~20 s), ends with a call ---------- */
+let eRun = 0;
+const words = s => String(s || "").split(",").map(x => x.trim()).filter(Boolean);
+function erasView(){ return `<div class="screen eras" id="eras"><div class="estage" id="estage"></div><div class="ehint">Click to start</div></div>`; }
+function erasWho(){
+  const w = S.eras.who;
+  if (w==="known" || w==="dream"){ const b = S.builder[w]; return {name: b.name.split(",")[0], img: b.img, video: b.video}; }
+  const c = S.chars[+String(w).slice(1)] || C(); return {name: c.name, img: avOf(c), video: videoOf(c)?.src};
+}
+function wireEras(){
+  const el = $("#eras"); if (!el) return;
+  el.addEventListener("click", e => { if (e.target.closest(".fcall") || el.dataset.on) return; el.dataset.on = "1"; el.querySelector(".ehint")?.remove(); erasPlay(); });
+}
+async function erasPlay(){
+  const my = ++eRun, wait = ms => new Promise(r => setTimeout(r, ms));
+  const st = () => $("#estage"), live = () => my === eRun && !!st();
+  st().innerHTML = `<div class="egrid">${words(S.eras.words).map(()=>`<span class="w"></span>`).join("")}</div>`;
+  const ws = st().querySelectorAll(".w"), list = words(S.eras.words);
+  for (let k = 0; k < list.length; k++){
+    ws[k].classList.add("in");
+    for (const ch of list[k]){ if (!live()) return; ws[k].textContent += ch; await wait(75); }
+    await wait(300);
+  }
+  await wait(900); if (!live()) return;
+  st().innerHTML = `<div class="egrid sites">${words(S.eras.sites).map(s=>`<span class="w site">${esc(s)}<small>${esc(S.eras.under)}</small></span>`).join("")}</div>`;
+  const ss = [...st().querySelectorAll(".w")];
+  for (const s of ss){ if (!live()) return; s.classList.add("in"); await wait(450); }
+  await wait(500);
+  for (const s of ss){ if (!live()) return; s.classList.add("struck"); await wait(800); }
+  await wait(700); if (!live()) return;
+  st().classList.add("fade"); await wait(700); if (!live()) return;
+  st().classList.remove("fade"); st().innerHTML = `<div class="elogo">${logo()}</div>`;
+  await wait(2000); if (!live()) return;
+  fakeCall($("#eras"), erasWho(), () => { const el = $("#eras"); if (!el || my !== eRun) return; delete el.dataset.on; st().innerHTML = ""; });
+}
+
+/* leaving a screen stops whatever it was playing */
+function resetFlows(){ clearTimeout(gTimer); gShown = 0; gTyping = -1; gPlaying = false; clearInterval(bTimer); bTimer = null; bStep = -1; bLock = false; eRun++; }
 
 /* ---------- render ---------- */
 /* #chat-3, #call-3, #feed-3 open that screen for character 3 (1 = first in the list);
@@ -645,15 +972,20 @@ function route(){
 }
 function render(){
   const r = route();
-  $("#screen").innerHTML = r==="feed"?feed(): r==="chats"?chats(): r==="chat"?chatView(false): r==="chat-custom"?chatView(true): r==="home"?home(): call();
+  $("#screen").innerHTML = r==="feed"?feed(): r==="chats"?chats(): r==="chat"?chatView(false): r==="chat-custom"?chatView(true): r==="home"?home():
+    r==="group"?groupView(): r==="builder"?builderView(): r==="eras"?erasView(): call();
+  $("#app").classList.toggle("wide", r==="eras");
   $("#sb").innerHTML = statusBar();
   $("#app").classList.toggle("with-sb", !!S.showBar);
   $("#app").classList.toggle("editing", editing);
   $("#app").querySelectorAll("[data-edit]").forEach(n => { n.contentEditable = editing ? "plaintext-only" : "false"; n.spellcheck = false; });
-  const bd = imgURL(r==="chat-custom" && S.chatBg ? S.chatBg : artOf(C()));
+  const bd = imgURL(r==="chat-custom" && S.chatBg ? S.chatBg : r==="group" ? (S.group.members[0]?.img || artOf(C())) : r==="builder" ? bCfg().img : artOf(C()));
   $("#backdrop").style.backgroundImage = bd ? cssURL(bd) : "";
   const m = $("#msgs"); if (m) m.scrollTop = m.scrollHeight;
   if (r==="call") wireCall(); else stopTimer();
+  if (r==="group") wireGroup();
+  if (r==="builder") wireBuilder();
+  if (r==="eras") wireEras();
   document.querySelectorAll(".scr .go").forEach(b => b.classList.toggle("on", b.dataset.screen===r));
 }
 
@@ -663,6 +995,7 @@ app.addEventListener("click", e => {
   const up = e.target.closest("[data-upload]"), ed = e.target.closest("[data-edit]");
   if (editing && ed) return;
   if (editing && up && !e.target.closest("button,input,form,.post,.b,.sys,.date")) { pick(up.dataset.upload); return; }
+  if (e.target.closest("[data-gjoin]")){ groupCall(); return; }
   const go = e.target.closest("[data-go]"); if (go){ location.hash = go.dataset.go; return; }
   const op = e.target.closest("[data-open]"); if (op){ S.active=+op.dataset.open; S.chars[S.active].unread=0; save(); location.hash="chat"; return; }
   const like = e.target.closest("[data-like]"); if (like){ const on = !like.dataset.on; like.dataset.on = on?"1":""; like.style.color = on ? "#ff4f7b" : ""; like.querySelector("path").setAttribute("fill", on ? "#ff4f7b" : "none"); return; }
@@ -792,6 +1125,44 @@ function shrink(f){
 
 /* ---------- creator panel ---------- */
 const panel = $("#panel");
+function groupPanel(){
+  const g = S.group;
+  const who = (w,k) => `<select aria-label="Who writes" data-gw="${k}">${g.members.map((m,j)=>`<option value="${j}" ${w===String(j)?"selected":""}>${esc(m.n)}</option>`).join("")}${[["me","You"],["sys","Notice"],["call","Group call"]].map(([v,l])=>`<option value="${v}" ${w===v?"selected":""}>${l}</option>`).join("")}</select>`;
+  return `<h3>Group chat</h3>
+  <p class="hint" style="margin-top:0">Tap the chat on screen to start. Messages appear by themselves; each tap shows the next one right away. "Group call" adds a Join button.</p>
+  <div class="two" style="margin-top:8px"><div class="fld"><label for="gname">Group name</label><input id="gname" data-bind="group.name" value="${esc(g.name)}"></div>
+  <div class="fld"><label for="gsp">Seconds per message</label><input id="gsp" type="number" min="0.5" max="5" step="0.1" data-bind="group.speed" value="${esc(g.speed)}"></div></div>
+  ${g.members.map((m,k)=>`<div class="msgrow" style="grid-template-columns:36px 1fr 44px 28px;align-items:center">
+    <button type="button" class="gpick" data-pick="group.members.${k}.img" aria-label="Photo of ${esc(m.n)}" style="${bgImg(m.img || portrait(30 + k*70))}"></button>
+    <input aria-label="Name" data-bind="group.members.${k}.n" value="${esc(m.n)}">
+    <input type="color" aria-label="Name color" data-bind="group.members.${k}.col" value="${esc(m.col)}">
+    <button type="button" class="x" data-gmdel="${k}" aria-label="Remove member">✕</button></div>`).join("")}
+  <div class="rowbtns" style="margin-bottom:10px"><button type="button" class="btn" data-gmadd>+ Member</button></div>
+  ${g.script.map((m,k)=>`<div class="msgrow">${who(m.w,k)}<textarea aria-label="Text" data-bind="group.script.${k}.x" rows="1">${esc(m.x)}</textarea><button type="button" class="x" data-gdel="${k}" aria-label="Delete message">✕</button></div>`).join("")}
+  <div class="rowbtns"><button type="button" class="btn" data-gadd="0">+ Message</button><button type="button" class="btn" data-gadd="sys">+ Notice</button><button type="button" class="btn" data-greset>Restart</button></div>`;
+}
+function builderPanel(){
+  const md = S.builder.mode, b = bCfg(), M = `builder.${md}`;
+  return `<h3>Build your dream boyfriend</h3>
+  <p class="hint" style="margin-top:0">Each tap on the screen highlights the option chosen here and moves on, so it looks like you're picking. Options are separated by commas.</p>
+  <div class="fld" style="margin-top:8px"><label for="bmode">Ending</label><select id="bmode" data-bmode><option value="dream" ${md==="dream"?"selected":""}>Dream man (realistic)</option><option value="known" ${md==="known"?"selected":""}>Known character (anime / books)</option></select></div>
+  <div class="two"><div class="fld"><label for="bt1">Title</label><input id="bt1" data-bind="${M}.title" value="${esc(b.title)}"></div><div class="fld"><label for="bt2">Subtitle</label><input id="bt2" data-bind="${M}.sub" value="${esc(b.sub)}"></div></div>
+  <div class="two"><div class="fld"><label for="bt3">His name</label><input id="bt3" data-bind="${M}.name" value="${esc(b.name)}"></div><div class="fld"><label for="bt4">Match text</label><input id="bt4" data-bind="${M}.tag" value="${esc(b.tag)}"></div></div>
+  <div class="rowbtns" style="margin-bottom:10px"><button type="button" class="btn" data-pick="${M}.img">His photo</button><button type="button" class="btn" data-breset>Restart</button></div>
+  ${b.steps.map((st,k)=>`<div class="fld"><label for="bq${k}">Step ${k+1}</label><input id="bq${k}" data-bind="${M}.steps.${k}.q" value="${esc(st.q)}">
+    <input aria-label="Options for step ${k+1}" data-bind="${M}.steps.${k}.o" value="${esc(st.o)}">
+    <select aria-label="Option picked in step ${k+1}" data-bsel="${k}">${bOpts(st).map((o,j)=>`<option value="${j}" ${st.s===j?"selected":""}>Picks: ${esc(o)}</option>`).join("")}</select></div>`).join("")}`;
+}
+function erasPanel(){
+  const e = S.eras, opts = [["known","Builder: "+S.builder.known.name],["dream","Builder: "+S.builder.dream.name]].concat(S.chars.map((c,k)=>["c"+k, c.name]));
+  return `<h3>Fandom eras</h3>
+  <p class="hint" style="margin-top:0">Open it on a laptop, press Record and click the black screen. It plays by itself (about 20 seconds) and ends with a call.</p>
+  <div class="fld" style="margin-top:8px"><label for="ew">First words</label><input id="ew" data-bind="eras.words" value="${esc(e.words)}"></div>
+  <div class="fld"><label for="es">Apps that get crossed out</label><input id="es" data-bind="eras.sites" value="${esc(e.sites)}"></div>
+  <div class="fld"><label for="eu">Text under each one</label><input id="eu" data-bind="eras.under" value="${esc(e.under)}"></div>
+  <div class="fld"><label for="eh">Who calls at the end</label><select id="eh" data-bind="eras.who">${opts.map(([v,l])=>`<option value="${v}" ${e.who===v?"selected":""}>${esc(l)}</option>`).join("")}</select></div>
+  <div class="rowbtns"><button type="button" class="btn" data-ereset>Restart</button></div>`;
+}
 const linkFor = s => location.href.split("#")[0] + "#" + s;
 function videoOptions(c){
   return [`<option value="-1" ${c.video===-1?"selected":""}>No video (voice call)</option>`]
@@ -808,6 +1179,7 @@ function renderPanel(){
 
   <h3>Screens and links</h3>
   <div class="scr">${SCREENS.map(([k,l])=>`<button type="button" class="go" data-screen="${k}">${l}</button><button type="button" class="btn" data-copy="${k}">Copy link</button>`).join("")}</div>
+  ${{group:groupPanel, builder:builderPanel, eras:erasPanel}[route()]?.() || ""}
 
   <h3>Character on screen</h3>
   <div class="fld"><select id="activeSel" aria-label="Character">${S.chars.map((c,k)=>`<option value="${k}" ${k===i?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div>
@@ -875,6 +1247,9 @@ panel.addEventListener("change", e => {
   if (t.id==="activeSel"){ S.active=+t.value; callState="ringing"; save(); render(); renderPanel(); }
   else if (t.id==="sbChk"){ S.showBar=t.checked; save(); render(); }
   else if (t.dataset.video!=null){ S.chars[+t.dataset.video].video=+t.value; callState="ringing"; save(); render(); }
+  else if (t.dataset.gw!=null){ S.group.script[+t.dataset.gw].w = t.value; save(); render(); }
+  else if (t.dataset.bmode!=null){ S.builder.mode = t.value; resetFlows(); save(); render(); renderPanel(); }
+  else if (t.dataset.bsel!=null){ bCfg().steps[+t.dataset.bsel].s = +t.value; save(); render(); }
   else if (t.dataset.mtype!=null){ const m = C().messages[+t.dataset.mtype]; m.t=t.value; if (m.t==="sys" && !m.h) m.h="+1 Intimacy!"; save(); render(); renderPanel(); }
   else if (t.dataset.bind) renderPanel();
 });
@@ -891,6 +1266,12 @@ panel.addEventListener("click", e => {
   if (d.del!=null){ S.chars.splice(+d.del,1); S.active=Math.min(S.active,S.chars.length-1); }
   if (d.add!=null){ S.chars.push({name:"New character", tagline:"Who are they?", activity:"Just arrived", time:"now", unread:1, hue:Math.floor(Math.random()*360), avatar:"", art:"", video:-1, post:"First post. Write what they're up to right now.", messages:[{t:"them", x:"Hey. I've been waiting for you to say hi."}]}); S.active=S.chars.length-1; }
   if (d.mdel!=null) C().messages.splice(+d.mdel,1);
+  if (d.gmadd!=null) S.group.members.push({n:"New member", img:"", col:"#c4a1ff"});
+  if (d.gmdel!=null){ const j = +d.gmdel; S.group.members.splice(j,1);
+    S.group.script = S.group.script.filter(m => m.w !== String(j)).map(m => isMember(m.w) && +m.w > j ? {...m, w:String(+m.w-1)} : m); }
+  if (d.gadd) S.group.script.push(d.gadd==="sys" ? {w:"sys", x:"Someone left the group"} : {w:"0", x:"New message"});
+  if (d.gdel!=null) S.group.script.splice(+d.gdel,1);
+  if (d.greset!=null || d.breset!=null || d.ereset!=null) resetFlows();
   if (d.madd){ const nm = C().name.split(" ")[0]; C().messages.push({them:{t:"them",x:"New message"}, me:{t:"me",x:"Your reply"}, sys:{t:"sys",h:"+1 Intimacy!",x:nm+" is enjoying talking with you"}, date:{t:"date",x:"TODAY"}}[d.madd]); }
   if (d.import!=null){ try{ const n = JSON.parse($("#io").value); if (!n.chars) throw 0; S = Object.assign(structuredClone(DEFAULT), n); toast("Version loaded"); }catch(err){ return toast("That code isn't valid. Copy the full code with Copy code."); } }
   if (d.reset!=null){ if (!d.sure){ d.sure="1"; t.textContent="Press again to confirm"; return; } S = structuredClone(DEFAULT); toast("Everything is back to the example"); }
@@ -916,7 +1297,7 @@ addEventListener("keydown", e => {
   if (e.key==="ArrowDown") step(1);
   if (e.key==="ArrowUp") step(-1);
 });
-addEventListener("hashchange", ()=>{ callState="ringing"; render(); });
+addEventListener("hashchange", ()=>{ callState="ringing"; resetFlows(); render(); renderPanel(); });
 /* The editor is hidden from regular visitors. It opens with ?studio in the
    link, or by pressing and holding the logo for 1.5 seconds. Once opened on
    a device, that device remembers it until "Exit editor". */
