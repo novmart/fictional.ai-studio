@@ -511,7 +511,10 @@ const DEFAULT = {
      messages:two("i saw you walk past the store today.","i'm calling. i literally can't move, so you come here.")},
     {name:"Diego", tagline:"Sabertooth, soft heart", activity:"Walking with the herd", time:"2h", unread:2, hue:35, avatar:"chars/diego.png", art:"", video:-1,
      post:"Not a cat. Do NOT call me a kitty.",
-     messages:two("the herd is asking about you.","fine. i miss you. happy? calling.")}
+     messages:two("the herd is asking about you.","fine. i miss you. happy? calling.")},
+    {name:"Naruto", tagline:"Your childhood crush, believe it", activity:"Eating ramen", time:"3m", unread:2, hue:28, avatar:"chars/naruto.png", art:"", video:-1,
+     post:"Ichiraku is open. Who's paying? (not me)",
+     messages:two("you used to watch me after school every day. i noticed.","i'm calling you, believe it!")}
   ],
   /* group chat: w = member number, "me", "sys" (notice) or "call" (notice with a Join button) */
   group:{ name:"Night Court 🌙", speed:1.6,
@@ -543,7 +546,7 @@ const DEFAULT = {
     title:"Build your dream boyfriend", sub:"Real or fictional. We'll find him for you.",
     fictional:{ label:"Fictional", hint:"anime, books & games", next:0,
       pool:[{name:"Satoru Gojo", img:"chars/gojo.png"},{name:"Megumi Fushiguro", img:"chars/megumi.png"},{name:"Ryomen Sukuna", img:"chars/sukuna.png"},
-            {name:"Azriel", img:"chars/azriel.png"},{name:"Rhysand", img:"chars/rhysand.png"},{name:"Lucien", img:"chars/lucien.png"},{name:"Dabi", img:"chars/dabi.png"}],
+            {name:"Azriel", img:"chars/azriel.png"},{name:"Rhysand", img:"chars/rhysand.png"},{name:"Lucien", img:"chars/lucien.png"},{name:"Dabi", img:"chars/dabi.png"},{name:"Naruto", img:"chars/naruto.png"}],
       faces:["chars/geto.png","chars/yuta.png","chars/gojo-2.png","chars/megumi-2.png"],
       steps:[
         {q:"Where is he from?", o:"Anime, Fantasy books, Video games, Movies", s:0},
@@ -552,7 +555,7 @@ const DEFAULT = {
         {q:"Red flag level?", o:"None, A little, Villain era 🚩", s:2},
         {q:"Love language?", o:"Words, Quality time, Protecting you, Gifts", s:2}]},
     real:{ label:"Real", hint:"a real guy, made for you", next:0,
-      pool:[{name:"Ethan, 24", img:"chars/dreamman-suit.png"},{name:"Noah, 25", img:"chars/dreamman-blonde.png"},{name:"Leo, 23", img:"chars/dreamman-dark.png"}],
+      pool:[{name:"Xavier Romano, 26", img:"chars/dreamman-suit.png"},{name:"Ace Hunter, 23", img:"chars/dreamman-blonde.png"},{name:"Damien Blackwood, 24", img:"chars/dreamman-dark.png"}],
       faces:["chars/rhysand.png"],
       steps:[
         {q:"Height?", o:"5'9\", 6'0\", 6'2\", 6'4\"", s:2},
@@ -576,8 +579,12 @@ function load(){
   /* older saves can have a character stuck on "no video" after a clip was added for it in this file */
   DEFAULT.chars.forEach(d => { const c = s.chars.find(c => c.name === d.name); if (c && c.video === -1 && d.video >= 0){ c.video = d.video; if (d.alt != null) c.alt = d.alt; } });
   /* characters added to this file after the save: add them once (deleting one later keeps it deleted) */
-  if ((s.charsV || 0) < 2){ DEFAULT.chars.slice(-5).forEach(d => { if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); }); s.charsV = 2; }
+  if ((s.charsV || 0) < 2){ DEFAULT.chars.slice(-6, -1).forEach(d => { if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); }); s.charsV = 2; }
+  if ((s.charsV || 0) < 3){ const d = DEFAULT.chars.find(d => d.name === "Naruto"); if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); s.charsV = 3; }
   if (!s.builder || !s.builder.fictional || !s.builder.real) s.builder = structuredClone(DEFAULT.builder);
+  if (!s.poolV){ if (!s.builder.fictional.pool.some(p => p.name === "Naruto")) s.builder.fictional.pool.push({name:"Naruto", img:"chars/naruto.png"}); s.poolV = 1; }
+  const oldReal = {"Ethan, 24":0,"Noah, 25":1,"Leo, 23":2};
+  s.builder.real.pool.forEach(p => { if (p.name in oldReal) p.name = DEFAULT.builder.real.pool[oldReal[p.name]].name; });
   s.group.members.forEach(m => { if (!m.img){ const d = DEFAULT.group.members.find(d => d.n === m.n); if (d) m.img = d.img; } });
   return s;
 }
