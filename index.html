@@ -198,6 +198,8 @@ button{font:inherit;color:inherit}
 .pip{width:96px;height:144px;border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(160deg,#3b3f4a,#1b1d24);box-shadow:0 8px 24px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);display:flex;align-items:flex-end;justify-content:center;flex:none}
 .pip svg{opacity:.55}
 .vbar{position:absolute;left:16px;right:16px;bottom:calc(24px + var(--bot));height:84px;border-radius:42px;background:rgba(40,40,46,.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;justify-content:space-around;align-items:center;z-index:5;padding:0 8px}
+/* clips with subtitles burned in: end the video above the call bar so the subtitles stay readable */
+.vcall .media.subs{bottom:calc(120px + var(--bot));height:auto;object-position:center bottom}
 .vbar button{width:58px;height:58px;border-radius:50%;border:0;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .vbar button.on{background:#fff}
 .vbar .end{background:#ff3b30}
@@ -426,7 +428,7 @@ const VIDEOS = [
   { label: "Ghost 1",   src: "videos/ghost-1.mp4",  poster: "videos/ghost-1.jpg" },
   { label: "Kamika 1",  src: "videos/kamika-1.mp4", poster: "videos/kamika-1.jpg" },
   { label: "Kamika 2",  src: "videos/kamika-2.mp4", poster: "videos/kamika-2.jpg" },
-  { label: "Gojo regret", src: "videos/gojo-regret.mp4", poster: "videos/gojo-regret.jpg" }
+  { label: "Gojo regret", src: "videos/gojo-regret.mp4", poster: "videos/gojo-regret.jpg", subs: true }
 ];
 /* ================================================================ */
 
@@ -825,7 +827,7 @@ function call(){
 }
 function videoCall(c, v){
   return `<div class="screen vcall" style="background:#000">
-    <video class="media" id="callVid" src="${esc(v.src)}" poster="${esc(v.poster||"")}" playsinline preload="auto"></video>
+    <video class="media${v.subs ? " subs" : ""}" id="callVid" src="${esc(v.src)}" poster="${esc(v.poster||"")}" playsinline preload="auto"></video>
     <div class="vtop">
       <div>${logo("sm")}<div class="nm">${esc(c.name)}</div><div class="tm" id="ctimer">00:00</div></div>
     </div>
@@ -868,7 +870,7 @@ function fakeCall(host, p, done){
   const live = () => {
     t0 = Date.now();
     o.innerHTML = p.video
-      ? `<div class="fc screen vcall" style="background:#000"><video class="media" src="${esc(p.video)}" playsinline></video>
+      ? `<div class="fc screen vcall" style="background:#000"><video class="media${VIDEOS.some(x => x.src === p.video && x.subs) ? " subs" : ""}" src="${esc(p.video)}" playsinline></video>
           <div class="vtop"><div>${logo("sm")}<div class="nm">${esc(p.name)}</div><div class="tm" data-ftm>00:00</div></div></div>
           <div class="vbar"><button type="button" data-toggle aria-label="Mute">${I.micoff}</button><button type="button" data-toggle aria-label="Camera">${I.cam()}</button><button type="button" aria-label="Flip camera">${I.flip}</button><button type="button" class="end" data-fend aria-label="End call">${I.hang}</button></div></div>`
       : `<div class="fc screen acall"><div class="blurbg" style="background-image:${cssURL(p.img)}"></div><div class="brandtop">${logo("sm")}</div>
