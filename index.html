@@ -425,7 +425,8 @@ const VIDEOS = [
   { label: "Scream 2",  src: "videos/scream-2.mp4", poster: "videos/scream-2.jpg" },
   { label: "Ghost 1",   src: "videos/ghost-1.mp4",  poster: "videos/ghost-1.jpg" },
   { label: "Kamika 1",  src: "videos/kamika-1.mp4", poster: "videos/kamika-1.jpg" },
-  { label: "Kamika 2",  src: "videos/kamika-2.mp4", poster: "videos/kamika-2.jpg" }
+  { label: "Kamika 2",  src: "videos/kamika-2.mp4", poster: "videos/kamika-2.jpg" },
+  { label: "Gojo regret", src: "videos/gojo-regret.mp4", poster: "videos/gojo-regret.jpg" }
 ];
 /* ================================================================ */
 
@@ -514,7 +515,10 @@ const DEFAULT = {
      messages:two("the herd is asking about you.","fine. i miss you. happy? calling.")},
     {name:"Naruto", tagline:"Your childhood crush, believe it", activity:"Eating ramen", time:"3m", unread:2, hue:28, avatar:"chars/naruto.png", art:"", video:-1,
      post:"Ichiraku is open. Who's paying? (not me)",
-     messages:two("you used to watch me after school every day. i noticed.","i'm calling you, believe it!")}
+     messages:two("you used to watch me after school every day. i noticed.","i'm calling you, believe it!")},
+    {name:"Gojo", tagline:"The strongest. Sorry.", activity:"Standing in the rain", time:"1m", unread:3, hue:200, avatar:"chars/gojo.png", art:"", video:12,
+     post:"I know I messed up. The strongest can still say sorry.",
+     messages:two("i know i messed up. i'm not good at this.","please pick up. just let me explain.")}
   ],
   /* group chat: w = member number, "me", "sys" (notice) or "call" (notice with a Join button) */
   group:{ name:"Night Court 🌙", speed:1.6,
@@ -545,7 +549,7 @@ const DEFAULT = {
   builder:{ mode:"fictional",
     title:"Build your dream boyfriend", sub:"Real or fictional. We'll find him for you.",
     fictional:{ label:"Fictional", hint:"anime, books & games", next:0,
-      pool:[{name:"Satoru Gojo", img:"chars/gojo.png"},{name:"Megumi Fushiguro", img:"chars/megumi.png"},{name:"Ryomen Sukuna", img:"chars/sukuna.png"},
+      pool:[{name:"Satoru Gojo", img:"chars/gojo.png", video:"videos/gojo-regret.mp4"},{name:"Megumi Fushiguro", img:"chars/megumi.png"},{name:"Ryomen Sukuna", img:"chars/sukuna.png"},
             {name:"Azriel", img:"chars/azriel.png"},{name:"Rhysand", img:"chars/rhysand.png"},{name:"Lucien", img:"chars/lucien.png"},{name:"Dabi", img:"chars/dabi.png"},{name:"Naruto", img:"chars/naruto.png"}],
       faces:["chars/geto.png","chars/yuta.png","chars/gojo-2.png","chars/megumi-2.png"],
       steps:[
@@ -579,10 +583,12 @@ function load(){
   /* older saves can have a character stuck on "no video" after a clip was added for it in this file */
   DEFAULT.chars.forEach(d => { const c = s.chars.find(c => c.name === d.name); if (c && c.video === -1 && d.video >= 0){ c.video = d.video; if (d.alt != null) c.alt = d.alt; } });
   /* characters added to this file after the save: add them once (deleting one later keeps it deleted) */
-  if ((s.charsV || 0) < 2){ DEFAULT.chars.slice(-6, -1).forEach(d => { if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); }); s.charsV = 2; }
+  if ((s.charsV || 0) < 2){ DEFAULT.chars.filter(d => ["Sukuna","Dabi","Sniper","Mannequin","Diego"].includes(d.name)).forEach(d => { if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); }); s.charsV = 2; }
   if ((s.charsV || 0) < 3){ const d = DEFAULT.chars.find(d => d.name === "Naruto"); if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); s.charsV = 3; }
+  if ((s.charsV || 0) < 4){ const d = DEFAULT.chars.find(d => d.name === "Gojo"); if (!s.chars.some(c => c.name === d.name)) s.chars.push(structuredClone(d)); s.charsV = 4; }
   if (!s.builder || !s.builder.fictional || !s.builder.real) s.builder = structuredClone(DEFAULT.builder);
   if (!s.poolV){ if (!s.builder.fictional.pool.some(p => p.name === "Naruto")) s.builder.fictional.pool.push({name:"Naruto", img:"chars/naruto.png"}); s.poolV = 1; }
+  if ((s.poolV || 0) < 2){ const g = s.builder.fictional.pool.find(p => p.name === "Satoru Gojo"); if (g && !g.video) g.video = "videos/gojo-regret.mp4"; s.poolV = 2; }
   const oldReal = {"Ethan, 24":0,"Noah, 25":1,"Leo, 23":2};
   s.builder.real.pool.forEach(p => { if (p.name in oldReal) p.name = DEFAULT.builder.real.pool[oldReal[p.name]].name; });
   s.group.members.forEach(m => { if (!m.img){ const d = DEFAULT.group.members.find(d => d.n === m.n); if (d) m.img = d.img; } });
