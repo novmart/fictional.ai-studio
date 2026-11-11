@@ -576,6 +576,65 @@ const DEFAULT = {
 let S = load();
 let editing = false, typingFor = -1;
 let callState = "ringing", callStart = 0, callTimer = null;
+
+/* ---------- character packs ---------- */
+const d2 = (a,b,day="TODAY") => [{t:"them",x:a},{t:"date",x:day},{t:"them",x:b}];
+const ch = (o) => Object.assign({time:"1h", unread:0, avatar:"", art:"", video:-1}, o);
+const ACOTAR = [
+  ch({name:"Azriel", avatar:"chars/azriel.png", tagline:"Spymaster of the Night Court", activity:"In the shadows", time:"2h", unread:2, hue:222,
+    post:"The shadows whispered something about you today. I'm choosing not to repeat it. Yet.",
+    messages:[
+      {t:"them", x:"You walked home alone again. My shadows followed you the whole way."},
+      {t:"me", x:"that's kind of creepy azriel"},
+      {t:"them", x:"It's called keeping you alive. You're welcome."},
+      {t:"sys", h:"+1 Intimacy!", x:"Azriel's shadows are curling closer to you"},
+      {t:"date", x:"TODAY"},
+      {t:"them", x:"Eat something. I can hear your stomach from across Velaris."}]}),
+  ch({name:"Elain Archeron", avatar:"chars/elain.png", tagline:"Seer · keeper of the gardens", activity:"Tending the garden", time:"3h", unread:1, hue:330,
+    post:"The moonflowers finally bloomed. Some things just need the dark to grow. Maybe people too.",
+    messages:d2("I saved you some roses from the garden. The pink ones, not the thorny ones.","I saw you in a dream last night. You were happy. Don't ask me how I know it'll come true. I just do.")}),
+  ch({name:"Lucien Vanserra", avatar:"chars/lucien.png", tagline:"Emissary · son of Autumn", activity:"Running errands for everyone", time:"4h", unread:1, hue:18,
+    post:"Delivered three messages, two threats and one very awkward apology today. Being the emissary is so glamorous.",
+    messages:d2("You look like you need a drink. And possibly a new set of friends. I can help with one of those.","Rough day? Join the club, little fox. We have terrible snacks and worse family drama.")}),
+  ch({name:"Rhysand", avatar:"chars/rhysand.png", tagline:"High Lord of the Night Court", activity:"Starfall prep", time:"1h", unread:3, hue:262,
+    post:"Velaris is beautiful tonight. Not that anyone asked. To the stars who listen, and the dreams that are answered.",
+    messages:[
+      {t:"them", x:"You're up late again, darling. Thinking about me?"},
+      {t:"me", x:"absolutely not"},
+      {t:"them", x:"Liar. I can hear your thoughts, remember?"},
+      {t:"sys", h:"+1 Intimacy!", x:"Rhysand is very amused by you"},
+      {t:"date", x:"TODAY"},
+      {t:"them", x:"Go to sleep. The stars will still be here tomorrow. So will I."}]}),
+  ch({name:"Feyre Archeron", tagline:"High Lady · painter", activity:"Painting in the studio", time:"5h", unread:0, hue:40,
+    post:"Painted the view from the House of Wind today. Still can't get the starlight right.",
+    messages:d2("Come sit with me in the studio. You don't have to talk, just be here.","I used to think surviving was enough. It isn't. You deserve to actually live.")}),
+  ch({name:"Cassian", avatar:"chars/cassian.png", tagline:"General of the Illyrian armies", activity:"Training at dawn", time:"6h", unread:2, hue:356,
+    post:"Ran the Illyrian mountains twice before breakfast. Az says I'm showing off. I am.",
+    messages:d2("Training ring. Ten minutes. Don't make me come get you, sweetheart.","Not bad today. Still terrible, but less terrible. I'm proud of you.")}),
+  ch({name:"Nesta Archeron", tagline:"Valkyrie · House of Wind", activity:"Reading in the library", time:"1d", unread:0, hue:200,
+    post:"The House gave me another stack of books. Smut, obviously. Don't judge me.",
+    messages:d2("If you're going to interrupt my reading, bring tea.","You don't have to be fixed to be worth something. Took me a while to learn that. Learn it faster than me.")}),
+  ch({name:"Gwyn Berdara", tagline:"Priestess · Valkyrie in training", activity:"Training with Nesta", time:"5h", unread:1, hue:24, avatar:"chars/gwyn.png", art:"chars/gwyn-art.png",
+    post:"Nesta made us run the stairs of the House of Wind again. I love her. I hate her. Both.",
+    messages:d2("You missed training. Nesta noticed. I covered for you. You owe me.","You're braver than you think. I know, because I used to think the same thing about myself.")}),
+  ch({name:"Mor", tagline:"Third in command · Court of Dreams", activity:"Drinks at Rita's", time:"2h", unread:1, hue:48,
+    post:"Rita's tonight. Dancing is mandatory. Cassian is already embarrassing himself.",
+    messages:d2("Get dressed, we're going out. No, you're not allowed to say no.","Whoever hurt you clearly didn't have taste. Their loss. Now dance with me.")}),
+  ch({name:"Amren", tagline:"Second in command", activity:"Doing a puzzle", time:"1d", unread:0, hue:190,
+    post:"Finished another puzzle. Ten thousand pieces. The High Lord owes me more jewelry.",
+    messages:d2("You're wasting my time. Speak quickly.","I've lived longer than this world and you're still the most confusing creature I've met. Fine. I like you.")}),
+  ch({name:"Tamlin", tagline:"High Lord of the Spring Court", activity:"At the manor", time:"3d", unread:0, hue:120,
+    post:"Spring is quiet this year. Too quiet.",
+    messages:d2("You'll stay at the manor where it's safe. I mean it.","…I'm trying to do better. I know I'm not good at it.")}),
+  ch({name:"Eris Vanserra", tagline:"Heir of the Autumn Court", activity:"Plotting, probably", time:"2d", unread:1, hue:8,
+    post:"Being the most hated male in Prythian is exhausting. Being right about everything is worse.",
+    messages:d2("Everyone thinks I'm the villain. It's honestly flattering.","Don't tell Cassian I was nice to you. I have a reputation, sweetheart.")})
+];
+const PACKS = { original: { label:"Default (Grandma, Gojo, Sukuna…)", chars: DEFAULT.chars }, acotar: { label:"ACOTAR (Azriel, Elain, Lucien…)", chars: ACOTAR } };
+function usePack(k){
+  const p = PACKS[k]; if (!p) return;
+  S.chars = structuredClone(p.chars); S.active = 0; S.pack = k; callState = "ringing";
+  }
 const sessionVideos = [];   /* videos uploaded during this visit (not saved) */
 
 function load(){
@@ -1280,6 +1339,14 @@ function renderPanel(){
   <div class="scr">${SCREENS.map(([k,l])=>`<button type="button" class="go" data-screen="${k}">${l}</button><button type="button" class="btn" data-copy="${k}">Copy link</button>`).join("")}</div>
   ${{group:groupPanel, builder:builderPanel, "builder-pc":builderPanel, eras:erasPanel}[route()]?.() || ""}
 
+  <h3>Character pack</h3>
+  <div class="two">
+    <div class="fld"><label for="packSel">Load a whole cast</label><select id="packSel">${Object.entries(PACKS).map(([k,p])=>`<option value="${k}" ${(S.pack||"original")===k?"selected":""}>${esc(p.label)}</option>`).join("")}</select></div>
+    <div class="fld"><label for="addSel">Add one ACOTAR character</label><select id="addSel"><option value="">Choose…</option>${ACOTAR.map((c,j)=>`<option value="${j}">${esc(c.name)}</option>`).join("")}</select></div>
+  </div>
+  <div class="rowbtns"><button type="button" class="btn" data-pack>Load this cast</button><button type="button" class="btn" data-copy-pack>Copy link with this cast</button></div>
+  <p class="hint" style="margin-top:0">Loading a cast replaces the characters in the list (your edits to them are lost). "Add one" keeps everyone and adds the new one at the end.</p>
+
   <h3>Character on screen</h3>
   <div class="fld"><select id="activeSel" aria-label="Character">${S.chars.map((c,k)=>`<option value="${k}" ${k===i?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div>
   <p class="hint" style="margin-top:0">The feed, chat, widget and call all show this character.</p>
@@ -1343,6 +1410,7 @@ function renderPanel(){
 panel.addEventListener("input", e => { const b = e.target.dataset.bind; if (!b) return; setP(S, b, e.target.value); save(); render(); });
 panel.addEventListener("change", e => {
   const t = e.target;
+  if (t.id==="addSel"){ if (!t.value) return; const n = structuredClone(ACOTAR[+t.value]); S.chars.push(n); S.active = S.chars.length-1; callState="ringing"; save(); render(); renderPanel(); toast(n.name + " added"); return; }
   if (t.id==="activeSel"){ S.active=+t.value; callState="ringing"; save(); render(); renderPanel(); }
   else if (t.id==="sbChk"){ S.showBar=t.checked; save(); render(); }
   else if (t.dataset.video!=null){ S.chars[+t.dataset.video].video=+t.value; callState="ringing"; save(); render(); }
@@ -1359,6 +1427,8 @@ panel.addEventListener("click", e => {
   if (d.screen){ location.hash = d.screen; return; }
   if (d.copy) return copy(linkFor(d.copy), "Link copied: " + SCREENS.find(s=>s[0]===d.copy)[1]);
   if (d.pick) return pick(d.pick);
+  if (d.copyPack!=null){ const k = $("#packSel").value; const u = new URL(location.href); u.hash = ""; u.searchParams.set("pack", k); return copy(u.toString().replace(/#$/,""), "Link copied: opens with the " + PACKS[k].label.split(" (")[0] + " cast"); }
+  if (d.pack!=null){ if (!d.sure){ d.sure="1"; t.textContent="Press again to replace the characters"; return; } usePack($("#packSel").value); toast("Cast loaded"); }
   if (d.export!=null){ const j = JSON.stringify(S, (k,v)=> typeof v==="string"&&v.startsWith("video:")?"":v); $("#io").value = j; return copy(j, "Code copied"); }
   if (d.clear!=null){ S.chars[+d.clear].avatar=""; S.chars[+d.clear].art=""; }
   if (d.bgclear) S[d.bgclear]="";
@@ -1416,6 +1486,8 @@ $("#exitBtn").addEventListener("click", ()=>{
   try{ localStorage.removeItem(STUDIO_KEY); }catch(e){}
   toast("Editor hidden. Hold the logo for 1.5 seconds to open it again.");
 });
+/* open the page with ?pack=acotar to load that cast directly */
+{ const qp = new URLSearchParams(location.search).get("pack"); if (qp && PACKS[qp] && S.pack !== qp){ usePack(qp); save(); } }
 render();
 </script>
 </body>
