@@ -8,7 +8,7 @@
 <title>Fictional Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lilita+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lilita+One&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap">
 <style>
 /* Layout: the app itself, full height, like the real product running in a
    browser. On wide screens it sits as a column over a blurred backdrop of
@@ -29,6 +29,7 @@
   --bot:env(safe-area-inset-bottom, 0px);
   --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",Arial,sans-serif;
   --brand:"Lilita One","Arial Rounded MT Bold",-apple-system,sans-serif;
+  --serif:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -348,6 +349,7 @@ body.clean .ehint{display:none}
 /* ---------- creator panel ---------- */
 .panel{width:380px;flex:none;height:100%;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:18px 18px 40px;font-size:13.5px;font-family:"Inter",var(--ui)}
 .panel[hidden]{display:none!important}
+[hidden]{display:none!important}
 .panel h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;font-weight:600}
 .panel .ph{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .panel p.hint{color:var(--muted);line-height:1.45;margin:6px 0 0}
@@ -386,6 +388,57 @@ textarea.io{width:100%;min-height:90px;background:#0b0b13;border:1px solid var(-
     padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(40px + var(--bot));box-shadow:0 -20px 60px rgba(0,0,0,.6)}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* ---------- confessional / story ---------- */
+.conf{background:#000}
+.conf .kb{animation:kb 20s ease-in-out infinite alternate;transform-origin:50% 35%}
+@keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.18) translate(-1.5%,-2%)}}
+.cshade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 75% at 50% 42%,transparent 45%,rgba(0,0,0,.5) 100%),linear-gradient(180deg,rgba(0,0,0,.6) 0%,transparent 24%,transparent 52%,rgba(0,0,0,.8) 100%)}
+.story .cshade{background:radial-gradient(110% 70% at 50% 45%,transparent 40%,rgba(0,0,0,.6) 100%),linear-gradient(180deg,rgba(0,0,0,.45),transparent 30%,transparent 50%,rgba(0,0,0,.85))}
+.bars::before,.bars::after{content:"";position:absolute;left:0;right:0;height:8%;background:#000;z-index:3}
+.bars::before{top:0}.bars::after{bottom:0}
+.cprog{position:absolute;top:calc(var(--top) + 60px);left:16px;right:16px;height:3px;border-radius:2px;background:rgba(255,255,255,.25);z-index:6;overflow:hidden}
+.cprog i{display:block;height:100%;width:0;background:#fff}
+.ctag{position:absolute;top:calc(var(--top) + 74px);left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;z-index:6}
+.ctag .rec,.ctag .part{display:inline-flex;align-items:center;gap:7px;font:700 11.5px/1 var(--ui);letter-spacing:.16em;text-transform:uppercase;background:rgba(0,0,0,.5);padding:7px 10px;border-radius:7px;backdrop-filter:blur(8px)}
+.ctag .part{color:rgba(255,255,255,.85);letter-spacing:.12em}
+.rec i{width:8px;height:8px;border-radius:50%;background:#ff3b30;animation:pulse 1.2s ease-in-out infinite}
+.rec i.v{background:var(--violet-hi)}
+@keyframes pulse{50%{opacity:.25}}
+.hook{position:absolute;top:calc(var(--top) + 118px);left:24px;right:24px;text-align:center;z-index:6;text-wrap:balance}
+.hook span{background:#fff;color:#0b0b14;font:800 17px/1.5 var(--ui);padding:3px 9px;border-radius:7px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.caps{position:absolute;left:20px;right:76px;bottom:calc(178px + var(--bot));text-align:center;z-index:6;font:800 27px/1.22 var(--ui);letter-spacing:-.01em;text-wrap:balance;text-shadow:0 0 2px #000,0 2px 0 rgba(0,0,0,.9),0 3px 16px rgba(0,0,0,.6);min-height:2em;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-end;gap:.05em .26em}
+.caps .w{display:inline-block;opacity:.38;transition:opacity .12s,transform .12s,background .12s}
+.caps .w.said{opacity:1}
+.caps .w.now{opacity:1;background:var(--violet);border-radius:8px;padding:0 .16em;margin:0 -.16em;transform:scale(1.06);text-shadow:none}
+.story .caps{left:20px;right:76px;bottom:calc(8% + 84px + var(--bot));font:italic 600 29px/1.18 var(--serif);letter-spacing:0;gap:.05em .22em}
+.story .caps .w{opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.story .caps .w.said,.story .caps .w.now{opacity:1;transform:none;background:none;padding:0;margin:0;color:#f6ead2}
+.chap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;text-align:center;opacity:0;transition:opacity .9s;pointer-events:none;padding:0 28px}
+.chap.on{opacity:1}
+.editing .chap{opacity:1;pointer-events:auto}
+.chap small{font:600 11.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.chap h2{font:italic 500 46px/1.04 var(--serif);margin:10px 0 0;text-shadow:0 4px 30px rgba(0,0,0,.7);text-wrap:balance}
+.chap .rule{width:44px;height:1px;background:rgba(255,255,255,.6);margin-top:16px}
+.lower{position:absolute;left:16px;bottom:calc(96px + var(--bot));z-index:6;display:flex;opacity:0;transform:translateX(-14px);transition:opacity .5s,transform .5s;max-width:calc(100% - 96px)}
+.lower.on,.editing .lower{opacity:1;transform:none}
+.lower .bar{width:5px;flex:none;background:var(--violet);border-radius:3px 0 0 3px}
+.lower .txt{background:rgba(255,255,255,.96);color:#0b0b14;padding:7px 12px 8px;border-radius:0 7px 7px 0;min-width:0}
+.lower b{display:block;font-size:17px;font-weight:800;letter-spacing:-.01em}
+.lower small{display:block;font-size:11px;font-weight:700;color:#5b2bd6;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+.crail{position:absolute;right:12px;bottom:calc(96px + var(--bot));display:flex;flex-direction:column;gap:12px;z-index:6}
+.crail .circ{width:48px;height:48px}
+.cta{position:absolute;left:16px;right:16px;bottom:calc(24px + var(--bot));z-index:6}
+.story .cta{bottom:calc(8% - 23px + var(--bot))}
+.cpaused{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:7;pointer-events:none}
+.cend{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:0 32px;background:rgba(5,5,15,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.cend .cav{width:92px;height:92px;margin:0 0 6px}
+.cend small{font:600 12px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.cend h3{margin:0 0 8px;font-size:26px;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+.story .cend h3{font:italic 600 32px/1.1 var(--serif)}
+.cend .row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.cbtn{height:46px;padding:0 20px;border-radius:23px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);font-size:15px;font-weight:600;cursor:pointer}
+.cbtn.pri{background:var(--violet);border-color:var(--violet)}
+
 </style>
 </head>
 <body>
@@ -441,6 +494,7 @@ const SCREENS = [
   ["home","iOS home screen widget"],
   ["call","Call (video or voice)"],
   ["group","Group chat"],
+  ["confessional","Confessional / story"],
   ["builder","Build your dream boyfriend"],
   ["builder-pc","Build your dream boyfriend (laptop)"],
   ["eras","Fandom eras (laptop)"]
@@ -582,6 +636,8 @@ const d2 = (a,b,day="TODAY") => [{t:"them",x:a},{t:"date",x:day},{t:"them",x:b}]
 const ch = (o) => Object.assign({time:"1h", unread:0, avatar:"", art:"", video:-1}, o);
 const ACOTAR = [
   ch({name:"Azriel", avatar:"chars/azriel.png", tagline:"Spymaster of the Night Court", activity:"In the shadows", time:"2h", unread:2, hue:222,
+    conf:{mode:"confessional", hook:"POV: Azriel finally says what he's been hiding", title:"Shadowsinger", part:"Part 1",
+      lines:"My shadows told me you were here.\nThey don't usually like people.\nThey like you.\nI've been trying to figure out why.\nI think… so do I."},
     post:"The shadows whispered something about you today. I'm choosing not to repeat it. Yet.",
     messages:[
       {t:"them", x:"You walked home alone again. My shadows followed you the whole way."},
@@ -591,12 +647,18 @@ const ACOTAR = [
       {t:"date", x:"TODAY"},
       {t:"them", x:"Eat something. I can hear your stomach from across Velaris."}]}),
   ch({name:"Elain Archeron", avatar:"chars/elain.png", tagline:"Seer · keeper of the gardens", activity:"Tending the garden", time:"3h", unread:1, hue:330,
+    conf:{mode:"confessional", hook:"POV: Elain sees something about your future", title:"The Seer", part:"Part 1",
+      lines:"I had a vision about you last night.\nYou were laughing.\nReally laughing.\nI don't know when it happens.\nBut I know it does. So hold on."},
     post:"The moonflowers finally bloomed. Some things just need the dark to grow. Maybe people too.",
     messages:d2("I saved you some roses from the garden. The pink ones, not the thorny ones.","I saw you in a dream last night. You were happy. Don't ask me how I know it'll come true. I just do.")}),
   ch({name:"Lucien Vanserra", avatar:"chars/lucien.png", tagline:"Emissary · son of Autumn", activity:"Running errands for everyone", time:"4h", unread:1, hue:18,
+    conf:{mode:"confessional", hook:"POV: Lucien is so done with everyone", title:"The Fox", part:"Part 1",
+      lines:"Do you know how many courts I've worked for?\nToo many.\nAnd somehow I'm still the one nobody asks how I'm doing.\nSo. Thanks for asking.\nNobody ever does."},
     post:"Delivered three messages, two threats and one very awkward apology today. Being the emissary is so glamorous.",
     messages:d2("You look like you need a drink. And possibly a new set of friends. I can help with one of those.","Rough day? Join the club, little fox. We have terrible snacks and worse family drama.")}),
   ch({name:"Rhysand", avatar:"chars/rhysand.png", tagline:"High Lord of the Night Court", activity:"Starfall prep", time:"1h", unread:3, hue:262,
+    conf:{mode:"confessional", hook:"POV: Rhysand reads your mind (again)", title:"The Night Court", part:"Part 1",
+      lines:"I could read your mind.\nI won't.\nI don't need to.\nYou're thinking about me again, darling.\nIt's written all over your face."},
     post:"Velaris is beautiful tonight. Not that anyone asked. To the stars who listen, and the dreams that are answered.",
     messages:[
       {t:"them", x:"You're up late again, darling. Thinking about me?"},
@@ -609,6 +671,8 @@ const ACOTAR = [
     post:"Painted the view from the House of Wind today. Still can't get the starlight right.",
     messages:d2("Come sit with me in the studio. You don't have to talk, just be here.","I used to think surviving was enough. It isn't. You deserve to actually live.")}),
   ch({name:"Cassian", avatar:"chars/cassian.png", tagline:"General of the Illyrian armies", activity:"Training at dawn", time:"6h", unread:2, hue:356,
+    conf:{mode:"confessional", hook:"POV: Cassian is your personal trainer", title:"The General", part:"Part 1",
+      lines:"Get up.\nNo, I don't care that it's five a.m.\nYou said you wanted to be stronger.\nStrong people show up.\nNow give me twenty, sweetheart."},
     post:"Ran the Illyrian mountains twice before breakfast. Az says I'm showing off. I am.",
     messages:d2("Training ring. Ten minutes. Don't make me come get you, sweetheart.","Not bad today. Still terrible, but less terrible. I'm proud of you.")}),
   ch({name:"Nesta Archeron", tagline:"Valkyrie · House of Wind", activity:"Reading in the library", time:"1d", unread:0, hue:200,
@@ -677,6 +741,8 @@ function logo(cls=""){
 
 /* ---------- icons ---------- */
 const I = {
+  mute:`<svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h3l5-4v14l-5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>`,
+  pause:`<svg class="ic" width="30" height="30" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>`,
   x:`<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>`,
   bubble:(s=22,w=1.8)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linejoin="round"><path d="M6 4h12a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-7l-5 4v-4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z"/></svg>`,
   heart:`<svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.1 4 7.4 4c2 0 3.5 1.1 4.6 2.7C13.1 5.1 14.6 4 16.6 4c3.3 0 5.5 3.2 4.4 6.7C19.5 15.4 12 20 12 20z"/></svg>`,
@@ -750,6 +816,7 @@ function feed(){
       <button type="button" class="tab on">Recommended</button>
       <button type="button" class="tab">Popular</button>
       <button type="button" class="tab">Following</button>
+      <button type="button" class="tab" data-go="confessional">Confessions</button>
     </div>
     <div class="side">
       <button type="button" class="circ tall" data-go="chat" aria-label="Open chat">${I.bubble(24,1.8)}<span>${c.messages.length}</span></button>
@@ -1117,6 +1184,93 @@ async function erasPlay(){
 /* leaving a screen stops whatever it was playing */
 function resetFlows(){ clearTimeout(gTimer); gAuto = true; gShown = 0; gTyping = -1; gPlaying = false; clearInterval(bTimer); bTimer = null; bStep = -1; bLock = false; eRun++; }
 
+function confOf(c){
+  if (!c.conf) c.conf = { mode:"confessional", hook:"POV: " + c.name.split(" ")[0] + " finally tells you the truth", title:"Chapter One", part:"Part 1",
+    lines:"Okay. I've never said this out loud.\nEveryone thinks they know my story.\nThey only know the version I let them see.\nSo here's the part nobody tells you.\nAsk me anything. I'll answer. Maybe." };
+  return c.conf;
+}
+const cvidOf = c => { const n = c.cvideo; return n >= 0 ? VIDEOS[n] : (n <= -2 ? sessionVideos[-n-2] : null); };
+/* ---------- confessional / story ---------- */
+let CP = null, confMuted = true;
+function confessional(){
+  const c = C(), i = ci(), f = confOf(c), v = cvidOf(c), story = f.mode === "story";
+  const first = esc(c.name.split(" ")[0]);
+  return `<div class="screen conf ${story?"story":""}">
+    <div class="bgup" data-upload="chars.${i}.art">${v
+      ? `<video class="media" id="confVid" src="${esc(v.src)}" poster="${esc(v.poster||"")}" autoplay muted loop playsinline></video>`
+      : media(artOf(c), "media kb")}</div>
+    <div class="cshade"></div>${story ? `<div class="bars"></div>` : ""}
+    <div class="head">
+      <button type="button" class="circ" data-go="feed" aria-label="Close">${I.x}</button>
+      ${logo()}
+      <button type="button" class="circ" data-snd aria-label="Sound" style="${v?"":"visibility:hidden"}">${confMuted?I.mute:I.sound}</button>
+    </div>
+    <div class="cprog"><i id="cbar"></i></div>
+    <div class="ctag"><span class="rec">${story?`<i class="v"></i>Story`:`<i></i>Confessional`}</span>${E(`chars.${i}.conf.part`, f.part, "span", "part")}</div>
+    ${story
+      ? `<div class="chap" id="chap"><small>${first}'s story</small>${E(`chars.${i}.conf.title`, f.title, "h2")}<div class="rule"></div></div>`
+      : (f.hook || editing ? `<div class="hook">${E(`chars.${i}.conf.hook`, f.hook, "span")}</div>` : "")}
+    <div class="caps" id="caps"></div>
+    ${story ? "" : `<div class="lower" id="lower"><div class="bar"></div><div class="txt">${E(`chars.${i}.name`, c.name, "b")}${E(`chars.${i}.tagline`, c.tagline, "small")}</div></div>`}
+    <div class="crail">
+      <button type="button" class="circ" data-like aria-label="Like">${I.heart}</button>
+      <button type="button" class="circ" data-go="chat" aria-label="Reply">${I.bubble(22,1.8)}</button>
+      <button type="button" class="circ" aria-label="Share">${I.share}</button>
+    </div>
+    <form class="say cta" data-say><input id="confSay" placeholder="Reply to ${first}…" autocomplete="off"><button type="submit" aria-label="Send">${I.send}</button></form>
+    <div class="cpaused" id="cpaused" hidden>${I.pause}</div>
+    <div class="cend" id="cend" hidden>
+      <div class="cav" style="${bgImg(avOf(c))}"></div>
+      <small>${story ? "End of " + esc(f.part) : first + " has more to say"}</small>
+      <h3>${story ? "Continue the story with " + first : first + " is waiting for your reply"}</h3>
+      <div class="row"><button type="button" class="cbtn pri" data-go="chat">Reply now</button><button type="button" class="cbtn" data-creplay>Watch again</button></div>
+      ${logo("sm")}
+    </div>
+  </div>`;
+}
+function startConf(){
+  stopConf();
+  const f = confOf(C()), story = f.mode === "story";
+  const lines = String(f.lines||"").split("\n").map(x=>x.trim()).filter(Boolean);
+  let t = story ? 2.8 : 0.8;
+  const segs = lines.map(l => { const w = l.split(/\s+/); const d = Math.max(1.5, w.length*0.34 + 0.6); const sg = {start:t, dur:d, words:w}; t += d; return sg; });
+  CP = { t0:performance.now(), off:0, paused:false, segs, total:t + 0.6, cur:-2, done:false };
+  const v = $("#confVid");
+  if (v){ v.muted = confMuted; try{ v.currentTime = 0; }catch(e){} v.play().catch(()=>{ v.muted = true; confMuted = true; v.play().catch(()=>{}); }); }
+  CP.raf = requestAnimationFrame(confTick);
+}
+function stopConf(){ if (CP) cancelAnimationFrame(CP.raf); CP = null; }
+const confTime = () => CP.paused ? CP.off : CP.off + (performance.now() - CP.t0) / 1000;
+function confTick(){
+  if (!CP) return;
+  const bar = $("#cbar"), caps = $("#caps"); if (!bar || !caps){ stopConf(); return; }
+  const t = confTime();
+  bar.style.width = Math.min(100, t / CP.total * 100) + "%";
+  const chap = $("#chap"); if (chap) chap.classList.toggle("on", t > 0.15 && t < (CP.segs[0] ? CP.segs[0].start - 0.35 : CP.total));
+  const low = $("#lower"); if (low) low.classList.toggle("on", t > 0.5);
+  let k = -1;
+  CP.segs.forEach((sg, j) => { if (t >= sg.start && t < sg.start + sg.dur) k = j; });
+  if (k !== CP.cur){ CP.cur = k; caps.innerHTML = k < 0 ? "" : CP.segs[k].words.map(w => `<span class="w">${esc(w)}</span>`).join(""); }
+  if (k >= 0){
+    const sg = CP.segs[k], n = sg.words.length, cur = Math.min(n - 1, Math.floor((t - sg.start) / Math.max(.3, sg.dur - .45) * n));
+    [...caps.children].forEach((w, j) => { w.classList.toggle("said", j < cur); w.classList.toggle("now", j === cur); });
+  }
+  if (t >= CP.total){ CP.done = true; caps.innerHTML = ""; const e = $("#cend"); if (e) e.hidden = false; return; }
+  CP.raf = requestAnimationFrame(confTick);
+}
+function togglePause(){
+  if (!CP || CP.done) return;
+  const v = $("#confVid");
+  if (CP.paused){ CP.t0 = performance.now(); CP.paused = false; v?.play().catch(()=>{}); CP.raf = requestAnimationFrame(confTick); }
+  else { CP.off = confTime(); CP.paused = true; cancelAnimationFrame(CP.raf); v?.pause(); }
+  const p = $("#cpaused"); if (p) p.hidden = !CP.paused;
+}
+function toggleSound(btn){
+  confMuted = !confMuted;
+  const v = $("#confVid"); if (v){ v.muted = confMuted; if (!confMuted) v.play().catch(()=>{}); }
+  btn.innerHTML = confMuted ? I.mute : I.sound;
+}
+
 /* ---------- render ---------- */
 /* #chat-3, #call-3, #feed-3 open that screen for character 3 (1 = first in the list);
    #call-13-2 starts with that character's second clip */
@@ -1129,7 +1283,7 @@ function route(){
 function render(){
   const r = route();
   $("#screen").innerHTML = r==="feed"?feed(): r==="chats"?chats(): r==="chat"?chatView(false): r==="chat-custom"?chatView(true): r==="home"?home():
-    r==="group"?groupView(): r==="builder"||r==="builder-pc"?builderView(): r==="eras"?erasView(): call();
+    r==="group"?groupView(): r==="confessional"?confessional(): r==="builder"||r==="builder-pc"?builderView(): r==="eras"?erasView(): call();
   $("#app").classList.toggle("wide", r==="eras" || r==="builder-pc");
   $("#sb").innerHTML = statusBar();
   $("#app").classList.toggle("with-sb", !!S.showBar);
@@ -1140,6 +1294,7 @@ function render(){
   const m = $("#msgs"); if (m) m.scrollTop = m.scrollHeight;
   if (r==="call") wireCall(); else stopTimer();
   if (r==="group") wireGroup();
+  if (r==="confessional") startConf(); else stopConf();
   if (isBuilder()) wireBuilder();
   if (r==="eras") wireEras();
   document.querySelectorAll(".scr .go").forEach(b => b.classList.toggle("on", b.dataset.screen===r));
@@ -1152,6 +1307,9 @@ app.addEventListener("click", e => {
   if (editing && ed) return;
   if (editing && up && !e.target.closest("button,input,form,.post,.b,.sys,.date")) { pick(up.dataset.upload); return; }
   if (e.target.closest("[data-gjoin]")){ groupCall(); return; }
+  const snd = e.target.closest("[data-snd]"); if (snd){ toggleSound(snd); return; }
+  if (e.target.closest("[data-creplay]")){ $("#cend").hidden = true; startConf(); return; }
+  if (route()==="confessional" && !editing && !e.target.closest("button,input,form,[data-go],.cend")){ togglePause(); return; }
   const go = e.target.closest("[data-go]"); if (go){ location.hash = go.dataset.go; return; }
   const op = e.target.closest("[data-open]"); if (op){ S.active=+op.dataset.open; S.chars[S.active].unread=0; save(); location.hash="chat"; return; }
   const like = e.target.closest("[data-like]"); if (like){ const on = !like.dataset.on; like.dataset.on = on?"1":""; like.style.color = on ? "#ff4f7b" : ""; like.querySelector("path").setAttribute("fill", on ? "#ff4f7b" : "none"); return; }
@@ -1322,6 +1480,11 @@ function erasPanel(){
   <div class="rowbtns"><button type="button" class="btn" data-ereset>Restart</button></div>`;
 }
 const linkFor = s => location.href.split("#")[0] + "#" + s;
+function cvideoOptions(c){
+  const n = c.cvideo ?? -1;
+  return [`<option value="-1" ${n===-1?"selected":""}>No video (photo with slow zoom)</option>`]
+    .concat(VIDEOS.map((v,k)=>`<option value="${k}" ${n===k?"selected":""}>${esc(v.label)}</option>`)).join("");
+}
 function videoOptions(c){
   return [`<option value="-1" ${c.video===-1?"selected":""}>No video (voice call)</option>`]
     .concat(VIDEOS.map((v,k)=>`<option value="${k}" ${c.video===k?"selected":""}>${esc(v.label)}</option>`))
@@ -1357,6 +1520,19 @@ function renderPanel(){
     <div class="fld"><label for="cv">When answered</label><select id="cv" data-video="${i}">${videoOptions(c)}</select></div>
   </div>
   <div class="rowbtns"><button type="button" class="btn" data-pick="chars.${i}.video">Try another video</button></div>
+
+  <h3>Confessional / story</h3>
+  <div class="two">
+    <div class="fld"><label for="cfm">Format</label><select id="cfm" data-bind="chars.${i}.conf.mode"><option value="confessional" ${confOf(c).mode!=="story"?"selected":""}>Confessional (talks to camera)</option><option value="story" ${confOf(c).mode==="story"?"selected":""}>Story (narrated)</option></select></div>
+    <div class="fld"><label for="cfv">Background</label><select id="cfv" data-cvideo="${i}">${cvideoOptions(c)}</select></div>
+  </div>
+  ${confOf(c).mode==="story"
+    ? `<div class="fld"><label for="cft">Chapter title</label><input id="cft" data-bind="chars.${i}.conf.title" value="${esc(confOf(c).title)}"></div>`
+    : `<div class="fld"><label for="cfh">Hook text (top of the video)</label><input id="cfh" data-bind="chars.${i}.conf.hook" value="${esc(confOf(c).hook)}"></div>`}
+  <div class="fld"><label for="cfp">Part label</label><input id="cfp" data-bind="chars.${i}.conf.part" value="${esc(confOf(c).part)}"></div>
+  <div class="fld"><label for="cfl">Script: one caption per line</label><textarea id="cfl" rows="7" data-bind="chars.${i}.conf.lines">${esc(confOf(c).lines)}</textarea></div>
+  <div class="rowbtns"><button type="button" class="btn" data-screen="confessional">Play from the start</button></div>
+  <p class="hint">Captions are timed automatically from the length of each line. To post it, press Record and screen-record the phone.</p>
 
   <h3>Characters</h3>
   ${S.chars.map((c,k)=>`<details class="card" data-k="c${k}" ${open.has("c"+k)?"open":""}>
@@ -1407,13 +1583,20 @@ function renderPanel(){
   panel.scrollTop = keep;
   document.querySelectorAll(".scr .go").forEach(b => b.classList.toggle("on", b.dataset.screen===route()));
 }
-panel.addEventListener("input", e => { const b = e.target.dataset.bind; if (!b) return; setP(S, b, e.target.value); save(); render(); });
+let confDebounce;
+panel.addEventListener("input", e => {
+  const b = e.target.dataset.bind; if (!b) return;
+  setP(S, b, e.target.value); save();
+  if (b.includes(".conf.") && e.target.tagName !== "SELECT"){ clearTimeout(confDebounce); confDebounce = setTimeout(render, 600); }
+  else render();
+});
 panel.addEventListener("change", e => {
   const t = e.target;
   if (t.id==="addSel"){ if (!t.value) return; const n = structuredClone(ACOTAR[+t.value]); S.chars.push(n); S.active = S.chars.length-1; callState="ringing"; save(); render(); renderPanel(); toast(n.name + " added"); return; }
   if (t.id==="activeSel"){ S.active=+t.value; callState="ringing"; save(); render(); renderPanel(); }
   else if (t.id==="sbChk"){ S.showBar=t.checked; save(); render(); }
   else if (t.dataset.video!=null){ S.chars[+t.dataset.video].video=+t.value; callState="ringing"; save(); render(); }
+  else if (t.dataset.cvideo!=null){ S.chars[+t.dataset.cvideo].cvideo=+t.value; save(); render(); }
   else if (t.dataset.gw!=null){ S.group.script[+t.dataset.gw].w = t.value; save(); render(); }
   else if (t.dataset.bmode!=null){ S.builder.mode = t.value; resetFlows(); save(); render(); renderPanel(); }
   else if (t.dataset.bsel!=null){ bCfg().steps[+t.dataset.bsel].s = +t.value; save(); render(); }
